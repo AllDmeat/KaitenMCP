@@ -1,0 +1,31 @@
+// swift-tools-version: 6.2
+import PackageDescription
+
+let package = Package(
+    name: "KaitenMCP",
+    platforms: [
+        .macOS(.v15),
+    ],
+    dependencies: [
+        .package(
+            url: "https://github.com/AllDmeat/KaitenSDK.git",
+            from: "0.1.0"
+        ),
+        .package(
+            url: "https://github.com/modelcontextprotocol/swift-sdk.git",
+            from: "0.10.0"
+        ),
+    ],
+    targets: [
+        .executableTarget(
+            name: "kaiten-mcp",
+            dependencies: [
+                .product(name: "KaitenSDK", package: "KaitenSDK"),
+                .product(name: "MCP", package: "swift-sdk"),
+            ],
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+            ]
+        ),
+    ]
+)

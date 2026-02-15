@@ -1,0 +1,43 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-26
+          - os: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Xcode version
+        if: runner.os == 'macOS'
+        id: xcode-version
+        run: echo "version=$(<.xcode-version)" >> $GITHUB_OUTPUT
+
+      - name: Select Xcode
+        if: runner.os == 'macOS'
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ steps.xcode-version.outputs.version }}
+
+      - name: Setup mise (Linux)
+        if: runner.os == 'Linux'
+        uses: jdx/mise-action@v2
+
+      - name: Setup Swift (Linux)
+        if: runner.os == 'Linux'
+        run: mise install swift
+
+      - name: Build
+        run: swift build
+
+      - name: Build Release
+        run: swift build -c release
