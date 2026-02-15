@@ -38,6 +38,9 @@ guard ProcessInfo.processInfo.environment["KAITEN_TOKEN"] != nil else {
 let kaiten = try KaitenClient()
 log("KaitenClient initialized successfully")
 
+let preferences = Preferences.load()
+log("Preferences loaded from \(Preferences.filePath.path): boards=\(preferences.boardIds?.description ?? "none"), spaces=\(preferences.spaceIds?.description ?? "none")")
+
 // MARK: - MCP Server
 
 let server = Server(
@@ -184,6 +187,16 @@ let allTools: [Tool] = [
             "required": .array(["id"]),
         ])
     ),
+
+    // Preferences
+    Tool(
+        name: "kaiten_get_preferences",
+        description: "Get current user preferences (configured boards, spaces). Returns the content of the user-level config file.",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([:]),
+        ])
+    ),
 ]
 
 // MARK: - Handlers
@@ -243,6 +256,9 @@ await server.withMethodHandler(CallTool.self) { params in
                 let id = try requireInt(params, key: "id")
                 let prop = try await kaiten.getCustomProperty(id: id)
                 return toJSON(prop)
+
+            case "kaiten_get_preferences":
+                return toJSON(preferences)
 
             default:
                 throw ToolError.unknownTool(params.name)
