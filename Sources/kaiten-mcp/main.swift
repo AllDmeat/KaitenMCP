@@ -260,6 +260,7 @@ await server.withMethodHandler(CallTool.self) { params in
 
 let transport = StdioTransport()
 try await server.start(transport: transport)
+await server.waitUntilCompleted()
 
 // MARK: - Helpers
 
