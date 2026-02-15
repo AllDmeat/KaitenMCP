@@ -197,6 +197,34 @@ let allTools: [Tool] = [
             "properties": .object([:]),
         ])
     ),
+    Tool(
+        name: "kaiten_configure",
+        description: "Manage user preferences (personal boards/spaces). Actions: get, set_boards, set_spaces, add_board, remove_board, add_space, remove_space",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "action": .object([
+                    "type": "string",
+                    "description": "Action to perform",
+                    "enum": .array(["get", "set_boards", "set_spaces", "add_board", "remove_board", "add_space", "remove_space"]),
+                ]),
+                "ids": .object([
+                    "type": "array",
+                    "description": "Array of IDs (for set_boards, set_spaces)",
+                    "items": .object(["type": "integer"]),
+                ]),
+                "id": .object([
+                    "type": "integer",
+                    "description": "Single ID (for add/remove operations)",
+                ]),
+                "alias": .object([
+                    "type": "string",
+                    "description": "Optional alias/name for the board or space",
+                ]),
+            ]),
+            "required": .array(["action"]),
+        ])
+    ),
 ]
 
 // MARK: - Handlers
@@ -260,6 +288,67 @@ await server.withMethodHandler(CallTool.self) { params in
             case "kaiten_get_preferences":
                 return toJSON(preferences)
 
+            case "kaiten_configure":
+                let action = try requireString(params, key: "action")
+                var prefs = Preferences.load()
+
+                switch action {
+                case "get":
+                    return toJSON(prefs)
+
+                case "set_boards":
+                    let ids = try requireIntArray(params, key: "ids")
+                    prefs.myBoards = ids.map { Preferences.BoardRef(id: $0) }
+                    try prefs.save()
+                    return toJSON(prefs)
+
+                case "set_spaces":
+                    let ids = try requireIntArray(params, key: "ids")
+                    prefs.mySpaces = ids.map { Preferences.SpaceRef(id: $0) }
+                    try prefs.save()
+                    return toJSON(prefs)
+
+                case "add_board":
+                    let id = try requireInt(params, key: "id")
+                    let alias = optionalString(params, key: "alias")
+                    var boards = prefs.myBoards ?? []
+                    if !boards.contains(where: { $0.id == id }) {
+                        boards.append(Preferences.BoardRef(id: id, alias: alias))
+                    }
+                    prefs.myBoards = boards
+                    try prefs.save()
+                    return toJSON(prefs)
+
+                case "remove_board":
+                    let id = try requireInt(params, key: "id")
+                    prefs.myBoards?.removeAll(where: { $0.id == id })
+                    try prefs.save()
+                    return toJSON(prefs)
+
+                case "add_space":
+                    let id = try requireInt(params, key: "id")
+                    let alias = optionalString(params, key: "alias")
+                    var spaces = prefs.mySpaces ?? []
+                    if !spaces.contains(where: { $0.id == id }) {
+                        spaces.append(Preferences.SpaceRef(id: id, alias: alias))
+                    }
+                    prefs.mySpaces = spaces
+                    try prefs.save()
+                    return toJSON(prefs)
+
+                case "remove_space":
+                    let id = try requireInt(params, key: "id")
+                    prefs.mySpaces?.removeAll(where: { $0.id == id })
+                    try prefs.save()
+                    return toJSON(prefs)
+
+                default:
+                    throw ToolError.invalidType(
+                        key: "action",
+                        expected: "one of: get, set_boards, set_spaces, add_board, remove_board, add_space, remove_space"
+                    )
+                }
+
             default:
                 throw ToolError.unknownTool(params.name)
             }
@@ -308,6 +397,30 @@ enum ToolError: Error, CustomStringConvertible {
         return Int(doubleVal)
     }
     throw ToolError.invalidType(key: key, expected: "integer")
+}
+
+@Sendable func requireString(_ params: CallTool.Parameters, key: String) throws -> String {
+    guard let value = params.arguments?[key] else {
+        throw ToolError.missingArgument(key)
+    }
+    guard let str = value.stringValue else {
+        throw ToolError.invalidType(key: key, expected: "string")
+    }
+    return str
+}
+
+@Sendable func optionalString(_ params: CallTool.Parameters, key: String) -> String? {
+    params.arguments?[key]?.stringValue
+}
+
+@Sendable func requireIntArray(_ params: CallTool.Parameters, key: String) throws -> [Int] {
+    guard let value = params.arguments?[key] else {
+        throw ToolError.missingArgument(key)
+    }
+    guard let arr = value.arrayValue else {
+        throw ToolError.invalidType(key: key, expected: "array")
+    }
+    return arr.compactMap { $0.intValue ?? $0.doubleValue.map(Int.init) }
 }
 
 @Sendable func toJSON(_ value: some Encodable) -> String {
