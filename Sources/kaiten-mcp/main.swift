@@ -2,12 +2,30 @@ import Foundation
 import KaitenSDK
 import MCP
 
+// MARK: - Logging
+
+let logFile: FileHandle? = {
+    let path = NSTemporaryDirectory() + "kaiten-mcp.log"
+    FileManager.default.createFile(atPath: path, contents: nil)
+    return FileHandle(forWritingAtPath: path)
+}()
+
+func log(_ message: String) {
+    let line = "[\(ISO8601DateFormatter().string(from: Date()))] \(message)\n"
+    logFile?.seekToEndOfFile()
+    logFile?.write(Data(line.utf8))
+}
+
 // MARK: - Configuration
 
 func exitWithError(_ message: String) -> Never {
     FileHandle.standardError.write(Data("\(message)\n".utf8))
+    log("FATAL: \(message)")
     exit(1)
 }
+
+log("Starting KaitenMCP...")
+log("Environment: KAITEN_URL=\(ProcessInfo.processInfo.environment["KAITEN_URL"] != nil ? "set" : "NOT SET"), KAITEN_TOKEN=\(ProcessInfo.processInfo.environment["KAITEN_TOKEN"] != nil ? "set" : "NOT SET")")
 
 guard ProcessInfo.processInfo.environment["KAITEN_URL"] != nil else {
     exitWithError("Error: KAITEN_URL environment variable is not set")
@@ -18,6 +36,7 @@ guard ProcessInfo.processInfo.environment["KAITEN_TOKEN"] != nil else {
 }
 
 let kaiten = try KaitenClient()
+log("KaitenClient initialized successfully")
 
 // MARK: - MCP Server
 
