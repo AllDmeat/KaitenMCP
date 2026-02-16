@@ -58,13 +58,21 @@ let allTools: [Tool] = [
     // Cards
     Tool(
         name: "kaiten_list_cards",
-        description: "List all cards on a board",
+        description: "List cards on a board (paginated, max 100 per page)",
         inputSchema: .object([
             "type": "object",
             "properties": .object([
                 "board_id": .object([
                     "type": "integer",
                     "description": "Board ID to list cards from",
+                ]),
+                "offset": .object([
+                    "type": "integer",
+                    "description": "Number of cards to skip (default: 0)",
+                ]),
+                "limit": .object([
+                    "type": "integer",
+                    "description": "Max cards to return (default/max: 100)",
                 ]),
             ]),
             "required": .array(["board_id"]),
@@ -257,8 +265,10 @@ await server.withMethodHandler(CallTool.self) { params in
             switch params.name {
             case "kaiten_list_cards":
                 let boardId = try requireInt(params, key: "board_id")
-                let page = try await kaiten.listCards(boardId: boardId)
-                return toJSON(page.items)
+                let offset = optionalInt(params, key: "offset") ?? 0
+                let limit = optionalInt(params, key: "limit") ?? 100
+                let page = try await kaiten.listCards(boardId: boardId, offset: offset, limit: limit)
+                return toJSON(page)
 
             case "kaiten_get_card":
                 let id = try requireInt(params, key: "id")
@@ -442,6 +452,11 @@ enum ToolError: Error, CustomStringConvertible {
         throw ToolError.invalidType(key: key, expected: "string")
     }
     return str
+}
+
+@Sendable func optionalInt(_ params: CallTool.Parameters, key: String) -> Int? {
+    guard let value = params.arguments?[key] else { return nil }
+    return value.intValue ?? value.doubleValue.map(Int.init)
 }
 
 @Sendable func optionalString(_ params: CallTool.Parameters, key: String) -> String? {
