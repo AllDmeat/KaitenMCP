@@ -314,7 +314,12 @@ await server.withMethodHandler(CallTool.self) { params in
                 return toJSON(prop)
 
             case "kaiten_get_preferences":
-                return toJSON(preferences)
+                let response = PreferencesResponse(
+                    url: config.url,
+                    myBoards: preferences.myBoards,
+                    mySpaces: preferences.mySpaces
+                )
+                return toJSON(response)
 
             case "kaiten_set_token":
                 var cfg = Config.load()

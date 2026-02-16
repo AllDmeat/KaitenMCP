@@ -1,5 +1,13 @@
 import Foundation
 
+/// Combined response for `kaiten_get_preferences` — includes url from config + user preferences.
+/// Token is intentionally excluded.
+struct PreferencesResponse: Codable, Sendable {
+    let url: String?
+    let myBoards: [Preferences.BoardRef]?
+    let mySpaces: [Preferences.SpaceRef]?
+}
+
 /// User-level preferences stored at `~/.config/kaiten-mcp/preferences.json`
 /// (Linux) or `~/Library/Application Support/kaiten-mcp/preferences.json` (macOS).
 ///
