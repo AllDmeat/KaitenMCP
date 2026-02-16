@@ -26,17 +26,17 @@ func exitWithError(_ message: String) -> Never {
 
 log("Starting KaitenMCP...")
 
+let config = Config.load()
 let preferences = Preferences.load()
+log("Config loaded from \(Config.filePath.path): url=\(config.url != nil ? "set" : "NOT SET"), token=\(config.token != nil ? "set" : "NOT SET")")
 log("Preferences loaded from \(Preferences.filePath.path): boards=\(preferences.boardIds?.description ?? "none"), spaces=\(preferences.spaceIds?.description ?? "none")")
 
-log("Config: KAITEN_URL=\(preferences.url != nil ? "set" : "NOT SET"), KAITEN_TOKEN=\(preferences.token != nil ? "set" : "NOT SET")")
-
-guard let kaitenURL = preferences.url else {
-    exitWithError("Error: KAITEN_URL not set in config. Run kaiten_set_token tool or edit \(Preferences.filePath.path)")
+guard let kaitenURL = config.url else {
+    exitWithError("Error: url not set. Run kaiten_set_token tool or edit \(Config.filePath.path)")
 }
 
-guard let kaitenToken = preferences.token else {
-    exitWithError("Error: KAITEN_TOKEN not set in config. Run kaiten_set_token tool or edit \(Preferences.filePath.path)")
+guard let kaitenToken = config.token else {
+    exitWithError("Error: token not set. Run kaiten_set_token tool or edit \(Config.filePath.path)")
 }
 
 let kaiten = try KaitenClient(baseURL: kaitenURL, token: kaitenToken)
@@ -307,16 +307,16 @@ await server.withMethodHandler(CallTool.self) { params in
                 return toJSON(preferences)
 
             case "kaiten_set_token":
-                var prefs = Preferences.load()
+                var cfg = Config.load()
                 if let token = optionalString(params, key: "token") {
-                    prefs.token = token
+                    cfg.token = token
                 }
                 if let url = optionalString(params, key: "url") {
-                    prefs.url = url
+                    cfg.url = url
                 }
-                try prefs.save()
+                try cfg.save()
                 // Mask token in response
-                var response = prefs
+                var response = cfg
                 if let t = response.token {
                     let masked = String(t.prefix(4)) + String(repeating: "*", count: max(0, t.count - 4))
                     response.token = masked

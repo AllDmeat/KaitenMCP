@@ -2,9 +2,10 @@ import Foundation
 
 /// User-level preferences stored at `~/.config/kaiten-mcp/preferences.json`
 /// (Linux) or `~/Library/Application Support/kaiten-mcp/preferences.json` (macOS).
+///
+/// Credentials (url/token) live in `config.json` — shared with CLI.
+/// This file contains only MCP-specific user preferences.
 struct Preferences: Codable, Sendable {
-    var token: String?
-    var url: String?
     var mySpaces: [SpaceRef]?
     var myBoards: [BoardRef]?
 
@@ -80,13 +81,5 @@ struct Preferences: Codable, Sendable {
         encoder.keyEncodingStrategy = .convertToSnakeCase
         let data = try encoder.encode(self)
         try data.write(to: Preferences.filePath, options: .atomic)
-
-        #if !os(macOS)
-        // Set 0600 permissions on Linux
-        try FileManager.default.setAttributes(
-            [.posixPermissions: 0o600],
-            ofItemAtPath: Preferences.filePath.path
-        )
-        #endif
     }
 }
