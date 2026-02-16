@@ -24,6 +24,14 @@ MCP-сервер для [Kaiten](https://kaiten.ru) — даёт AI-агента
 
 ## Установка
 
+### mise (рекомендуется)
+
+[mise](https://mise.jdx.dev) — менеджер инструментов. Установит нужную версию автоматически:
+
+```bash
+mise use -g ubi:AllDmeat/KaitenMCP
+```
+
 ### Из GitHub Release
 
 Скачайте бинарь для вашей платформы со [страницы релизов](https://github.com/AllDmeat/KaitenMCP/releases):
