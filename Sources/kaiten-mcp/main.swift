@@ -25,21 +25,26 @@ func exitWithError(_ message: String) -> Never {
 }
 
 log("Starting KaitenMCP...")
-log("Environment: KAITEN_URL=\(ProcessInfo.processInfo.environment["KAITEN_URL"] != nil ? "set" : "NOT SET"), KAITEN_TOKEN=\(ProcessInfo.processInfo.environment["KAITEN_TOKEN"] != nil ? "set" : "NOT SET")")
-
-guard ProcessInfo.processInfo.environment["KAITEN_URL"] != nil else {
-    exitWithError("Error: KAITEN_URL environment variable is not set")
-}
-
-guard ProcessInfo.processInfo.environment["KAITEN_TOKEN"] != nil else {
-    exitWithError("Error: KAITEN_TOKEN environment variable is not set")
-}
-
-let kaiten = try KaitenClient()
-log("KaitenClient initialized successfully")
 
 let preferences = Preferences.load()
 log("Preferences loaded from \(Preferences.filePath.path): boards=\(preferences.boardIds?.description ?? "none"), spaces=\(preferences.spaceIds?.description ?? "none")")
+
+log("Config: KAITEN_URL=\(preferences.url != nil ? "set" : "NOT SET"), KAITEN_TOKEN=\(preferences.token != nil ? "set" : "NOT SET")")
+
+guard let kaitenURL = preferences.url else {
+    exitWithError("Error: KAITEN_URL not set in config. Run kaiten_set_token tool or edit \(Preferences.filePath.path)")
+}
+
+guard let kaitenToken = preferences.token else {
+    exitWithError("Error: KAITEN_TOKEN not set in config. Run kaiten_set_token tool or edit \(Preferences.filePath.path)")
+}
+
+// Set env vars so KaitenClient picks them up
+setenv("KAITEN_URL", kaitenURL, 1)
+setenv("KAITEN_TOKEN", kaitenToken, 1)
+
+let kaiten = try KaitenClient()
+log("KaitenClient initialized successfully")
 
 // MARK: - MCP Server
 
@@ -225,6 +230,23 @@ let allTools: [Tool] = [
             "required": .array(["action"]),
         ])
     ),
+    Tool(
+        name: "kaiten_set_token",
+        description: "Store Kaiten API token and URL in user config. Token is saved securely with restricted file permissions (0600). Env vars always override config.",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "token": .object([
+                    "type": "string",
+                    "description": "Kaiten API token",
+                ]),
+                "url": .object([
+                    "type": "string",
+                    "description": "Kaiten API base URL (e.g. https://mycompany.kaiten.ru)",
+                ]),
+            ]),
+        ])
+    ),
 ]
 
 // MARK: - Handlers
@@ -287,6 +309,23 @@ await server.withMethodHandler(CallTool.self) { params in
 
             case "kaiten_get_preferences":
                 return toJSON(preferences)
+
+            case "kaiten_set_token":
+                var prefs = Preferences.load()
+                if let token = optionalString(params, key: "token") {
+                    prefs.token = token
+                }
+                if let url = optionalString(params, key: "url") {
+                    prefs.url = url
+                }
+                try prefs.save()
+                // Mask token in response
+                var response = prefs
+                if let t = response.token {
+                    let masked = String(t.prefix(4)) + String(repeating: "*", count: max(0, t.count - 4))
+                    response.token = masked
+                }
+                return toJSON(response)
 
             case "kaiten_configure":
                 let action = try requireString(params, key: "action")

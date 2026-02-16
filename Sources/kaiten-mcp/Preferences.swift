@@ -3,6 +3,8 @@ import Foundation
 /// User-level preferences stored at `~/.config/kaiten-mcp/preferences.json`
 /// (Linux) or `~/Library/Application Support/kaiten-mcp/preferences.json` (macOS).
 struct Preferences: Codable, Sendable {
+    var token: String?
+    var url: String?
     var mySpaces: [SpaceRef]?
     var myBoards: [BoardRef]?
 
