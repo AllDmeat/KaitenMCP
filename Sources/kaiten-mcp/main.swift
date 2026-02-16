@@ -39,11 +39,7 @@ guard let kaitenToken = preferences.token else {
     exitWithError("Error: KAITEN_TOKEN not set in config. Run kaiten_set_token tool or edit \(Preferences.filePath.path)")
 }
 
-// Set env vars so KaitenClient picks them up
-setenv("KAITEN_URL", kaitenURL, 1)
-setenv("KAITEN_TOKEN", kaitenToken, 1)
-
-let kaiten = try KaitenClient()
+let kaiten = try KaitenClient(baseURL: kaitenURL, token: kaitenToken)
 log("KaitenClient initialized successfully")
 
 // MARK: - MCP Server
@@ -261,8 +257,8 @@ await server.withMethodHandler(CallTool.self) { params in
             switch params.name {
             case "kaiten_list_cards":
                 let boardId = try requireInt(params, key: "board_id")
-                let cards = try await kaiten.listCards(boardId: boardId)
-                return toJSON(cards)
+                let page = try await kaiten.listCards(boardId: boardId)
+                return toJSON(page.items)
 
             case "kaiten_get_card":
                 let id = try requireInt(params, key: "id")
