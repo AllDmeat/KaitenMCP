@@ -33,18 +33,11 @@ struct Preferences: Codable, Sendable {
 
     // MARK: - File path
 
-    /// Platform-appropriate config directory.
+    /// Config directory — always `~/.config/kaiten-mcp/` on all platforms.
+    /// Matches CLI (KaitenSDK) so credentials in config.json are shared.
     static var configDirectory: URL {
-        #if os(macOS)
-        FileManager.default
-            .homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/kaiten-mcp", isDirectory: true)
-        #else
-        let xdgConfig = ProcessInfo.processInfo.environment["XDG_CONFIG_HOME"]
-            ?? (FileManager.default.homeDirectoryForCurrentUser.path + "/.config")
-        return URL(fileURLWithPath: xdgConfig)
-            .appendingPathComponent("kaiten-mcp", isDirectory: true)
-        #endif
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        return home.appendingPathComponent(".config/kaiten-mcp", isDirectory: true)
     }
 
     static var filePath: URL {
