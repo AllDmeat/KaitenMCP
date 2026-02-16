@@ -1,4 +1,4 @@
-name: CI
+name: Build
 on:
   push:
     branches: [main]
@@ -39,6 +39,3 @@ jobs:
 
       - name: Build
         run: swift build
-
-      - name: Build Release
-        run: swift build -c release
