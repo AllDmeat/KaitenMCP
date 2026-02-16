@@ -13,14 +13,18 @@ jobs:
       matrix:
         include:
           - os: macos-26
+            name: macOS ARM64
             artifact-name: macos-binary
             archive-suffix: darwin_arm64
           - os: ubuntu-24.04
+            name: Linux x86_64
             artifact-name: linux-x86_64-binary
             archive-suffix: linux_x86_64
           - os: ubuntu-24.04-arm
+            name: Linux ARM64
             artifact-name: linux-arm64-binary
             archive-suffix: linux_arm64
+    name: Build (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
