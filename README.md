@@ -43,10 +43,12 @@ swift build -c release
 
 Credentials хранятся в `config.json`, пользовательские предпочтения — в `preferences.json`:
 
-| Файл | Путь (Linux) | Путь (macOS) | Содержимое |
-|------|-------------|-------------|------------|
-| `config.json` | `~/.config/kaiten-mcp/config.json` | `~/Library/Application Support/kaiten-mcp/config.json` | `url`, `token` |
-| `preferences.json` | `~/.config/kaiten-mcp/preferences.json` | `~/Library/Application Support/kaiten-mcp/preferences.json` | `myBoards`, `mySpaces` |
+| Файл | Путь | Содержимое |
+|------|------|------------|
+| `config.json` | `~/.config/kaiten-mcp/config.json` | `url`, `token` |
+| `preferences.json` | `~/.config/kaiten-mcp/preferences.json` | `myBoards`, `mySpaces` |
+
+Путь одинаковый на всех платформах (macOS, Linux).
 
 `config.json` — общий для MCP и [CLI](https://github.com/AllDmeat/KaitenSDK). Достаточно настроить один раз.
 
