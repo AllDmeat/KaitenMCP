@@ -16,14 +16,17 @@ jobs:
             name: macOS ARM64
             artifact-name: macos-binary
             archive-suffix: darwin_arm64
+            static-swift-stdlib: false
           - os: ubuntu-24.04
             name: Linux x86_64
             artifact-name: linux-x86_64-binary
             archive-suffix: linux_x86_64
+            static-swift-stdlib: true
           - os: ubuntu-24.04-arm
             name: Linux ARM64
             artifact-name: linux-arm64-binary
             archive-suffix: linux_arm64
+            static-swift-stdlib: true
     name: Build (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
@@ -52,8 +55,12 @@ jobs:
       - name: Build release binary
         id: build
         run: |
-          swift build -c release --product "$PRODUCT_NAME"
-          echo "bin-path=$(swift build -c release --product "$PRODUCT_NAME" --show-bin-path)" >> $GITHUB_OUTPUT
+          STATIC_FLAG=""
+          if [ "${{ matrix.static-swift-stdlib }}" = "true" ]; then
+            STATIC_FLAG="--static-swift-stdlib"
+          fi
+          swift build -c release --product "$PRODUCT_NAME" $STATIC_FLAG
+          echo "bin-path=$(swift build -c release --product "$PRODUCT_NAME" $STATIC_FLAG --show-bin-path)" >> $GITHUB_OUTPUT
 
       - name: Package binary
         id: package
