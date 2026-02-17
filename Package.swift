@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "KaitenMCP",
     platforms: [
-        .macOS(.v15),
+        .iOS(.v13),
+        .macOS(.v10_15),
     ],
     dependencies: [
         .package(
