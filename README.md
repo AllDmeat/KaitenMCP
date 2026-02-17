@@ -1,66 +1,66 @@
 # KaitenMCP
 
-MCP-сервер для [Kaiten](https://kaiten.ru) — даёт AI-агентам доступ к доскам, карточкам и свойствам через [Model Context Protocol](https://modelcontextprotocol.io).
+MCP server for [Kaiten](https://kaiten.ru) — gives AI agents access to boards, cards, and properties via [Model Context Protocol](https://modelcontextprotocol.io).
 
-Построен поверх [KaitenSDK](https://github.com/AllDmeat/KaitenSDK).
+Built on top of [KaitenSDK](https://github.com/AllDmeat/KaitenSDK).
 
 ## Tools
 
-| Tool | Описание | Параметры |
-|------|----------|-----------|
-| `kaiten_list_spaces` | Список пространств | — |
-| `kaiten_list_boards` | Доски в пространстве | `space_id` |
-| `kaiten_get_board` | Доска по ID | `id` |
-| `kaiten_get_board_columns` | Колонки доски | `board_id` |
-| `kaiten_get_board_lanes` | Лейны доски | `board_id` |
-| `kaiten_list_cards` | Карточки на доске (пагинация) | `board_id`, `offset?`, `limit?` |
-| `kaiten_get_card` | Карточка по ID | `id` |
-| `kaiten_get_card_members` | Участники карточки | `card_id` |
-| `kaiten_list_custom_properties` | Кастомные свойства | — |
-| `kaiten_get_custom_property` | Кастомное свойство по ID | `id` |
-| `kaiten_configure` | Управление предпочтениями (доски/пространства) | `action`, `ids?`, `id?`, `alias?` |
-| `kaiten_get_preferences` | Текущие предпочтения | — |
-| `kaiten_set_token` | Сохранить URL и токен в конфиг | `url?`, `token?` |
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `kaiten_list_spaces` | List spaces | — |
+| `kaiten_list_boards` | Boards in a space | `space_id` |
+| `kaiten_get_board` | Board by ID | `id` |
+| `kaiten_get_board_columns` | Board columns | `board_id` |
+| `kaiten_get_board_lanes` | Board lanes | `board_id` |
+| `kaiten_list_cards` | Cards on a board (paginated) | `board_id`, `offset?`, `limit?` |
+| `kaiten_get_card` | Card by ID | `id` |
+| `kaiten_get_card_members` | Card members | `card_id` |
+| `kaiten_list_custom_properties` | Custom properties | — |
+| `kaiten_get_custom_property` | Custom property by ID | `id` |
+| `kaiten_configure` | Manage preferences (boards/spaces) | `action`, `ids?`, `id?`, `alias?` |
+| `kaiten_get_preferences` | Current preferences | — |
+| `kaiten_set_token` | Save URL and token to config | `url?`, `token?` |
 
-## Установка
+## Installation
 
-### mise (рекомендуется)
+### mise (recommended)
 
-[mise](https://mise.jdx.dev) — менеджер инструментов. Установит нужную версию автоматически:
+[mise](https://mise.jdx.dev) — a tool manager. It will install the required version automatically:
 
 ```bash
 mise use -g ubi:AllDmeat/KaitenMCP
 ```
 
-### Из GitHub Release
+### From GitHub Release
 
-Скачайте бинарь для вашей платформы со [страницы релизов](https://github.com/AllDmeat/KaitenMCP/releases):
+Download the binary for your platform from the [releases page](https://github.com/AllDmeat/KaitenMCP/releases):
 
 - `kaiten-mcp_<version>_darwin_arm64.tar.gz` — macOS (Apple Silicon)
 - `kaiten-mcp_<version>_linux_x86_64.tar.gz` — Linux x86_64
 - `kaiten-mcp_<version>_linux_arm64.tar.gz` — Linux ARM64
 
-### Из исходников
+### From source
 
 ```bash
 swift build -c release
-# Бинарь: .build/release/kaiten-mcp
+# Binary: .build/release/kaiten-mcp
 ```
 
-## Конфигурация
+## Configuration
 
-Credentials хранятся в `config.json`, пользовательские предпочтения — в `preferences.json`:
+Credentials are stored in `config.json`, user preferences in `preferences.json`:
 
-| Файл | Путь | Содержимое |
-|------|------|------------|
+| File | Path | Contents |
+|------|------|----------|
 | `config.json` | `~/.config/kaiten-mcp/config.json` | `url`, `token` |
 | `preferences.json` | `~/.config/kaiten-mcp/preferences.json` | `myBoards`, `mySpaces` |
 
-Путь одинаковый на всех платформах (macOS, Linux).
+The path is the same on all platforms (macOS, Linux).
 
-`config.json` — общий для MCP и [CLI](https://github.com/AllDmeat/KaitenSDK). Достаточно настроить один раз.
+`config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/KaitenSDK). You only need to configure it once.
 
-### Вручную
+### Manually
 
 ```bash
 mkdir -p ~/.config/kaiten-mcp
@@ -73,13 +73,13 @@ EOF
 chmod 600 ~/.config/kaiten-mcp/config.json
 ```
 
-### Через MCP-тул
+### Via MCP tool
 
-После подключения сервера вызовите `kaiten_set_token` с параметрами `url` и `token` — файл создастся автоматически.
+After connecting the server, call `kaiten_set_token` with `url` and `token` parameters — the file will be created automatically.
 
-Токен Kaiten: Настройки профиля → API-токены → Создать.
+Kaiten token: Profile Settings → API Tokens → Create.
 
-## Подключение
+## Connecting
 
 ### Claude Desktop
 
@@ -97,7 +97,7 @@ chmod 600 ~/.config/kaiten-mcp/config.json
 
 ### OpenClaw
 
-В конфиге OpenClaw (`gateway.yaml`), секция `mcp`:
+In the OpenClaw config (`gateway.yaml`), `mcp` section:
 
 ```yaml
 mcp:
@@ -118,11 +118,11 @@ Settings → MCP Servers → Add:
 }
 ```
 
-## Требования
+## Requirements
 
 - Swift 6.0+
-- macOS 15+ или Linux
+- macOS 15+ or Linux
 
-## Лицензия
+## License
 
 MIT
