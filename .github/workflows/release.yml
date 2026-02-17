@@ -33,24 +33,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Read Xcode version
-        if: runner.os == 'macOS'
-        id: xcode-version
-        run: echo "version=$(<.xcode-version)" >> $GITHUB_OUTPUT
-
-      - name: Select Xcode
-        if: runner.os == 'macOS'
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ${{ steps.xcode-version.outputs.version }}
-
-      - name: Setup mise (Linux)
-        if: runner.os == 'Linux'
+      - name: Install mise
         uses: jdx/mise-action@v2
-
-      - name: Setup Swift (Linux)
-        if: runner.os == 'Linux'
-        run: mise install swift
 
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
