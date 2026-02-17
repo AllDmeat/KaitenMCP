@@ -99,7 +99,7 @@ let allTools: [Tool] = [
                 "exclude_card_ids": .object(["type": "string", "description": "Exclude these card IDs"]),
                 "condition": .object(["type": "integer", "description": "Card condition: 1=queued, 2=in progress, 3=done"]),
                 "states": .object(["type": "string", "description": "Comma-separated states"]),
-                "archived": .object(["type": "boolean", "description": "Filter by archived status"]),
+                "archived": .object(["type": "boolean", "description": "Filter by archived status (default: false — only non-archived cards)"]),
                 "asap": .object(["type": "boolean", "description": "Filter ASAP cards"]),
                 "overdue": .object(["type": "boolean", "description": "Filter overdue cards"]),
                 "done_on_time": .object(["type": "boolean", "description": "Filter done-on-time cards"]),
@@ -122,6 +122,39 @@ let allTools: [Tool] = [
                     "type": "integer",
                     "description": "Card ID",
                 ]),
+            ]),
+            "required": .array(["id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_update_card",
+        description: "Update an existing card by ID. All fields except id are optional — only provided fields will be updated.",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "id": .object(["type": "integer", "description": "Card ID (required)"]),
+                "title": .object(["type": "string", "description": "New title"]),
+                "description": .object(["type": "string", "description": "New description (markdown)"]),
+                "asap": .object(["type": "boolean", "description": "Mark as ASAP"]),
+                "due_date": .object(["type": "string", "description": "Due date (ISO 8601)"]),
+                "due_date_time_present": .object(["type": "boolean", "description": "Whether due date includes time"]),
+                "sort_order": .object(["type": "number", "description": "Sort order"]),
+                "expires_later": .object(["type": "boolean", "description": "Expires later flag"]),
+                "size_text": .object(["type": "string", "description": "Size text"]),
+                "board_id": .object(["type": "integer", "description": "Move to board ID"]),
+                "column_id": .object(["type": "integer", "description": "Move to column ID"]),
+                "lane_id": .object(["type": "integer", "description": "Move to lane ID"]),
+                "owner_id": .object(["type": "integer", "description": "Owner user ID"]),
+                "type_id": .object(["type": "integer", "description": "Card type ID"]),
+                "service_id": .object(["type": "integer", "description": "Service ID"]),
+                "blocked": .object(["type": "boolean", "description": "Blocked flag"]),
+                "condition": .object(["type": "integer", "description": "Condition: 1=queued, 2=in progress, 3=done"]),
+                "external_id": .object(["type": "string", "description": "External ID"]),
+                "text_format_type_id": .object(["type": "integer", "description": "Text format type ID"]),
+                "sd_new_comment": .object(["type": "boolean", "description": "Service desk new comment flag"]),
+                "owner_email": .object(["type": "string", "description": "Owner email address"]),
+                "prev_card_id": .object(["type": "integer", "description": "Previous card ID for repositioning"]),
+                "estimate_workload": .object(["type": "number", "description": "Estimated workload"]),
             ]),
             "required": .array(["id"]),
         ])
@@ -153,6 +186,33 @@ let allTools: [Tool] = [
                 ]),
             ]),
             "required": .array(["card_id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_create_card",
+        description: "Create a new card on a board",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "title": .object(["type": "string", "description": "Card title"]),
+                "board_id": .object(["type": "integer", "description": "Board ID"]),
+                "column_id": .object(["type": "integer", "description": "Column ID"]),
+                "lane_id": .object(["type": "integer", "description": "Lane ID"]),
+                "description": .object(["type": "string", "description": "Card description (markdown)"]),
+                "asap": .object(["type": "boolean", "description": "Mark as ASAP"]),
+                "due_date": .object(["type": "string", "description": "Due date (ISO 8601)"]),
+                "due_date_time_present": .object(["type": "boolean", "description": "Whether due_date includes time"]),
+                "sort_order": .object(["type": "number", "description": "Sort order"]),
+                "expires_later": .object(["type": "boolean", "description": "Expires later flag"]),
+                "size_text": .object(["type": "string", "description": "Size text"]),
+                "owner_id": .object(["type": "integer", "description": "Owner user ID"]),
+                "responsible_id": .object(["type": "integer", "description": "Responsible user ID"]),
+                "owner_email": .object(["type": "string", "description": "Owner email"]),
+                "position": .object(["type": "integer", "description": "Position"]),
+                "type_id": .object(["type": "integer", "description": "Card type ID"]),
+                "external_id": .object(["type": "string", "description": "External ID"]),
+            ]),
+            "required": .array(["title", "board_id"]),
         ])
     ),
     Tool(
@@ -389,7 +449,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     excludeCardIds: optionalString(params, key: "exclude_card_ids"),
                     condition: optionalInt(params, key: "condition"),
                     states: optionalString(params, key: "states"),
-                    archived: optionalBool(params, key: "archived"),
+                    archived: optionalBool(params, key: "archived") ?? false,
                     asap: optionalBool(params, key: "asap"),
                     overdue: optionalBool(params, key: "overdue"),
                     doneOnTime: optionalBool(params, key: "done_on_time"),
@@ -409,6 +469,35 @@ await server.withMethodHandler(CallTool.self) { params in
                 let card = try await kaiten.getCard(id: id)
                 return toJSON(card)
 
+            case "kaiten_update_card":
+                let id = try requireInt(params, key: "id")
+                let card = try await kaiten.updateCard(
+                    id: id,
+                    title: optionalString(params, key: "title"),
+                    description: optionalString(params, key: "description"),
+                    asap: optionalBool(params, key: "asap"),
+                    dueDate: optionalString(params, key: "due_date"),
+                    dueDateTimePresent: optionalBool(params, key: "due_date_time_present"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    expiresLater: optionalBool(params, key: "expires_later"),
+                    sizeText: optionalString(params, key: "size_text"),
+                    boardId: optionalInt(params, key: "board_id"),
+                    columnId: optionalInt(params, key: "column_id"),
+                    laneId: optionalInt(params, key: "lane_id"),
+                    ownerId: optionalInt(params, key: "owner_id"),
+                    typeId: optionalInt(params, key: "type_id"),
+                    serviceId: optionalInt(params, key: "service_id"),
+                    blocked: optionalBool(params, key: "blocked"),
+                    condition: optionalInt(params, key: "condition"),
+                    externalId: optionalString(params, key: "external_id"),
+                    textFormatTypeId: optionalInt(params, key: "text_format_type_id"),
+                    sdNewComment: optionalBool(params, key: "sd_new_comment"),
+                    ownerEmail: optionalString(params, key: "owner_email"),
+                    prevCardId: optionalInt(params, key: "prev_card_id"),
+                    estimateWorkload: optionalDouble(params, key: "estimate_workload")
+                )
+                return toJSON(card)
+
             case "kaiten_get_card_members":
                 let cardId = try requireInt(params, key: "card_id")
                 let members = try await kaiten.getCardMembers(cardId: cardId)
@@ -418,6 +507,45 @@ await server.withMethodHandler(CallTool.self) { params in
                 let cardId = try requireInt(params, key: "card_id")
                 let comments = try await kaiten.getCardComments(cardId: cardId)
                 return toJSON(comments)
+
+            case "kaiten_create_card":
+                let title = try requireString(params, key: "title")
+                let boardId = try requireInt(params, key: "board_id")
+                let columnId = optionalInt(params, key: "column_id")
+                let laneId = optionalInt(params, key: "lane_id")
+                let description = optionalString(params, key: "description")
+                let asap = optionalBool(params, key: "asap")
+                let dueDate = optionalString(params, key: "due_date")
+                let dueDateTimePresent = optionalBool(params, key: "due_date_time_present")
+                let sortOrder = params.arguments?["sort_order"]?.doubleValue
+                let expiresLater = optionalBool(params, key: "expires_later")
+                let sizeText = optionalString(params, key: "size_text")
+                let ownerId = optionalInt(params, key: "owner_id")
+                let responsibleId = optionalInt(params, key: "responsible_id")
+                let ownerEmail = optionalString(params, key: "owner_email")
+                let position = optionalInt(params, key: "position")
+                let typeId = optionalInt(params, key: "type_id")
+                let externalId = optionalString(params, key: "external_id")
+                let card = try await kaiten.createCard(
+                    title: title,
+                    boardId: boardId,
+                    columnId: columnId,
+                    laneId: laneId,
+                    description: description,
+                    asap: asap,
+                    dueDate: dueDate,
+                    dueDateTimePresent: dueDateTimePresent,
+                    sortOrder: sortOrder,
+                    expiresLater: expiresLater,
+                    sizeText: sizeText,
+                    ownerId: ownerId,
+                    responsibleId: responsibleId,
+                    ownerEmail: ownerEmail,
+                    position: position,
+                    typeId: typeId,
+                    externalId: externalId
+                )
+                return toJSON(card)
 
             case "kaiten_create_comment":
                 let cardId = try requireInt(params, key: "card_id")
@@ -622,6 +750,11 @@ enum ToolError: Error, CustomStringConvertible {
 
 @Sendable func optionalString(_ params: CallTool.Parameters, key: String) -> String? {
     params.arguments?[key]?.stringValue
+}
+
+@Sendable func optionalDouble(_ params: CallTool.Parameters, key: String) -> Double? {
+    guard let value = params.arguments?[key] else { return nil }
+    return value.doubleValue ?? value.intValue.map(Double.init)
 }
 
 @Sendable func optionalBool(_ params: CallTool.Parameters, key: String) -> Bool? {
