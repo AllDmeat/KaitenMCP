@@ -155,6 +155,19 @@ let allTools: [Tool] = [
             "required": .array(["card_id"]),
         ])
     ),
+    Tool(
+        name: "kaiten_create_comment",
+        description: "Add a comment to a card",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "card_id": .object(["type": "integer", "description": "Card ID"]),
+                "text": .object(["type": "string", "description": "Comment text (markdown)"]),
+            ]),
+            "required": .array(["card_id", "text"]),
+        ])
+    ),
+
     // Spaces & Boards
     Tool(
         name: "kaiten_list_spaces",
@@ -405,6 +418,12 @@ await server.withMethodHandler(CallTool.self) { params in
                 let cardId = try requireInt(params, key: "card_id")
                 let comments = try await kaiten.getCardComments(cardId: cardId)
                 return toJSON(comments)
+
+            case "kaiten_create_comment":
+                let cardId = try requireInt(params, key: "card_id")
+                let text = try requireString(params, key: "text")
+                let comment = try await kaiten.createComment(cardId: cardId, text: text)
+                return toJSON(comment)
 
             case "kaiten_list_spaces":
                 let spaces = try await kaiten.listSpaces()

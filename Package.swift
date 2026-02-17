@@ -10,7 +10,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/AllDmeat/KaitenSDK.git",
-            from: "0.7.0"
+            from: "0.8.0"
         ),
         .package(
             url: "https://github.com/modelcontextprotocol/swift-sdk.git",
