@@ -1,8 +1,40 @@
-# KaitenMCP
+# kaiten-mcp
+
+[![Build](https://github.com/AllDmeat/kaiten-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/AllDmeat/kaiten-mcp/actions/workflows/ci.yml)
 
 MCP server for [Kaiten](https://kaiten.ru) — gives AI agents access to boards, cards, and properties via [Model Context Protocol](https://modelcontextprotocol.io).
 
-Built on top of [KaitenSDK](https://github.com/AllDmeat/KaitenSDK).
+Built on top of [kaiten-sdk](https://github.com/AllDmeat/kaiten-sdk).
+
+## Requirements
+
+- Swift 6.2+
+- macOS 15+ or Linux (x86_64, ARM64)
+
+## Installation
+
+### mise (recommended)
+
+[mise](https://mise.jdx.dev) — a tool manager. It will install the required version automatically:
+
+```bash
+mise use github:AllDmeat/kaiten-mcp
+```
+
+### From GitHub Release
+
+Download the binary for your platform from the [releases page](https://github.com/AllDmeat/kaiten-mcp/releases):
+
+- `kaiten-mcp_<version>_darwin_arm64.tar.gz` — macOS (Apple Silicon)
+- `kaiten-mcp_<version>_linux_x86_64.tar.gz` — Linux x86_64
+- `kaiten-mcp_<version>_linux_arm64.tar.gz` — Linux ARM64
+
+### From source
+
+```bash
+swift build -c release
+# Binary: .build/release/kaiten-mcp
+```
 
 ## Tools
 
@@ -22,31 +54,6 @@ Built on top of [KaitenSDK](https://github.com/AllDmeat/KaitenSDK).
 | `kaiten_get_preferences` | Current preferences | — |
 | `kaiten_set_token` | Save URL and token to config | `url?`, `token?` |
 
-## Installation
-
-### mise (recommended)
-
-[mise](https://mise.jdx.dev) — a tool manager. It will install the required version automatically:
-
-```bash
-mise use -g ubi:AllDmeat/KaitenMCP
-```
-
-### From GitHub Release
-
-Download the binary for your platform from the [releases page](https://github.com/AllDmeat/KaitenMCP/releases):
-
-- `kaiten-mcp_<version>_darwin_arm64.tar.gz` — macOS (Apple Silicon)
-- `kaiten-mcp_<version>_linux_x86_64.tar.gz` — Linux x86_64
-- `kaiten-mcp_<version>_linux_arm64.tar.gz` — Linux ARM64
-
-### From source
-
-```bash
-swift build -c release
-# Binary: .build/release/kaiten-mcp
-```
-
 ## Configuration
 
 Credentials are stored in `config.json`, user preferences in `preferences.json`:
@@ -58,24 +65,31 @@ Credentials are stored in `config.json`, user preferences in `preferences.json`:
 
 The path is the same on all platforms (macOS, Linux).
 
-`config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/KaitenSDK). You only need to configure it once.
+`config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/kaiten-sdk). You only need to configure it once.
 
-### Manually
+`config.json`:
 
-```bash
-mkdir -p ~/.config/kaiten-mcp
-cat > ~/.config/kaiten-mcp/config.json << 'EOF'
+```json
 {
   "url": "https://your-company.kaiten.ru/api/latest",
   "token": "your-api-token"
 }
-EOF
-chmod 600 ~/.config/kaiten-mcp/config.json
 ```
 
-### Via MCP tool
+`preferences.json`:
 
-After connecting the server, call `kaiten_set_token` with `url` and `token` parameters — the file will be created automatically.
+```json
+{
+  "myBoards": [
+    { "id": 123, "alias": "team" }
+  ],
+  "mySpaces": [
+    { "id": 456 }
+  ]
+}
+```
+
+You can also configure credentials via the `kaiten_set_token` MCP tool after connecting the server.
 
 Kaiten token: Profile Settings → API Tokens → Create.
 
@@ -95,17 +109,6 @@ Kaiten token: Profile Settings → API Tokens → Create.
 }
 ```
 
-### OpenClaw
-
-In the OpenClaw config (`gateway.yaml`), `mcp` section:
-
-```yaml
-mcp:
-  servers:
-    - name: kaiten
-      command: /path/to/kaiten-mcp
-```
-
 ### Cursor
 
 Settings → MCP Servers → Add:
@@ -117,11 +120,6 @@ Settings → MCP Servers → Add:
   }
 }
 ```
-
-## Requirements
-
-- Swift 6.0+
-- macOS 15+ or Linux
 
 ## License
 
