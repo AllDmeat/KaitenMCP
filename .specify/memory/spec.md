@@ -5,98 +5,98 @@
 
 ## User Scenarios & Testing
 
-### User Story 1 — AI-агент читает карточки с доски (Priority: P1)
+### User Story 1 — AI agent reads cards from a board (Priority: P1)
 
-AI-агент (Claude Desktop, OpenClaw, Cursor) подключается к KaitenMCP через stdio и получает информацию о карточках на доске Kaiten: список карточек, детали конкретной карточки, участников карточки.
+An AI agent (Claude Desktop, OpenClaw, Cursor) connects to KaitenMCP via stdio and retrieves information about cards on a Kaiten board: card list, details of a specific card, card members.
 
-**Why this priority**: Карточки — основная сущность Kaiten. Без доступа к ним остальные tools бесполезны.
+**Why this priority**: Cards are the core entity in Kaiten. Without access to them, other tools are useless.
 
-**Independent Test**: Запустить MCP-сервер, вызвать `kaiten_list_cards` с board_id, получить JSON-массив карточек.
+**Independent Test**: Start the MCP server, call `kaiten_list_cards` with board_id, receive a JSON array of cards.
 
 **Acceptance Scenarios**:
 
-1. **Given** сервер запущен с валидными KAITEN_URL и KAITEN_TOKEN, **When** клиент вызывает `kaiten_list_cards` с board_id, **Then** возвращается JSON-массив карточек
-2. **Given** сервер запущен, **When** клиент вызывает `kaiten_get_card` с id существующей карточки, **Then** возвращается JSON-объект карточки
-3. **Given** сервер запущен, **When** клиент вызывает `kaiten_get_card` с несуществующим id, **Then** возвращается ошибка с isError=true
-4. **Given** сервер запущен, **When** клиент вызывает `kaiten_get_card_members` с card_id, **Then** возвращается JSON-массив участников
+1. **Given** the server is running with valid KAITEN_URL and KAITEN_TOKEN, **When** the client calls `kaiten_list_cards` with board_id, **Then** a JSON array of cards is returned
+2. **Given** the server is running, **When** the client calls `kaiten_get_card` with the id of an existing card, **Then** a JSON card object is returned
+3. **Given** the server is running, **When** the client calls `kaiten_get_card` with a non-existent id, **Then** an error with isError=true is returned
+4. **Given** the server is running, **When** the client calls `kaiten_get_card_members` with card_id, **Then** a JSON array of members is returned
 
 ---
 
-### User Story 2 — AI-агент навигирует по структуре Kaiten (Priority: P1)
+### User Story 2 — AI agent navigates the Kaiten structure (Priority: P1)
 
-AI-агент просматривает пространства, доски, колонки и лейны для понимания структуры проекта.
+An AI agent browses spaces, boards, columns, and lanes to understand the project structure.
 
-**Why this priority**: Чтобы вызвать `kaiten_list_cards`, нужно знать board_id. Навигация по структуре — необходимый шаг.
+**Why this priority**: To call `kaiten_list_cards`, you need to know the board_id. Navigating the structure is a necessary step.
 
-**Independent Test**: Вызвать `kaiten_list_spaces`, получить пространства, затем `kaiten_list_boards` для пространства.
+**Independent Test**: Call `kaiten_list_spaces`, get spaces, then `kaiten_list_boards` for a space.
 
 **Acceptance Scenarios**:
 
-1. **Given** сервер запущен, **When** клиент вызывает `kaiten_list_spaces`, **Then** возвращается JSON-массив пространств
-2. **Given** сервер запущен, **When** клиент вызывает `kaiten_list_boards` с space_id, **Then** возвращается JSON-массив досок
-3. **Given** сервер запущен, **When** клиент вызывает `kaiten_get_board` с id, **Then** возвращается JSON-объект доски
-4. **Given** сервер запущен, **When** клиент вызывает `kaiten_get_board_columns` с board_id, **Then** возвращается JSON-массив колонок
-5. **Given** сервер запущен, **When** клиент вызывает `kaiten_get_board_lanes` с board_id, **Then** возвращается JSON-массив лейнов
+1. **Given** the server is running, **When** the client calls `kaiten_list_spaces`, **Then** a JSON array of spaces is returned
+2. **Given** the server is running, **When** the client calls `kaiten_list_boards` with space_id, **Then** a JSON array of boards is returned
+3. **Given** the server is running, **When** the client calls `kaiten_get_board` with id, **Then** a JSON board object is returned
+4. **Given** the server is running, **When** the client calls `kaiten_get_board_columns` with board_id, **Then** a JSON array of columns is returned
+5. **Given** the server is running, **When** the client calls `kaiten_get_board_lanes` with board_id, **Then** a JSON array of lanes is returned
 
 ---
 
-### User Story 3 — AI-агент работает с кастомными свойствами (Priority: P2)
+### User Story 3 — AI agent works with custom properties (Priority: P2)
 
-AI-агент получает информацию о кастомных свойствах карточек (custom properties) — их определения и значения.
+An AI agent retrieves information about custom card properties — their definitions and values.
 
-**Why this priority**: Кастомные свойства нужны для полного понимания карточек, но базовая навигация работает и без них.
+**Why this priority**: Custom properties are needed for full understanding of cards, but basic navigation works without them.
 
-**Independent Test**: Вызвать `kaiten_list_custom_properties`, получить список определений.
+**Independent Test**: Call `kaiten_list_custom_properties`, get a list of definitions.
 
 **Acceptance Scenarios**:
 
-1. **Given** сервер запущен, **When** клиент вызывает `kaiten_list_custom_properties`, **Then** возвращается JSON-массив определений свойств
-2. **Given** сервер запущен, **When** клиент вызывает `kaiten_get_custom_property` с id, **Then** возвращается JSON-объект свойства
+1. **Given** the server is running, **When** the client calls `kaiten_list_custom_properties`, **Then** a JSON array of property definitions is returned
+2. **Given** the server is running, **When** the client calls `kaiten_get_custom_property` with id, **Then** a JSON property object is returned
 
 ---
 
 ### Edge Cases
 
-- Что если KAITEN_URL или KAITEN_TOKEN не заданы? → Сервер должен упасть при старте с понятной ошибкой
-- Что если токен невалидный / истёк? → Tool возвращает isError=true с сообщением об unauthorized
-- Что если Kaiten API недоступен (таймаут, 5xx)? → Tool возвращает isError=true, retry-логика в SDK
-- Что если аргумент tool невалидный (отрицательный id, отсутствует обязательный параметр)? → Tool возвращает isError=true с описанием ошибки
+- What if KAITEN_URL or KAITEN_TOKEN are not set? → The server should crash at startup with a clear error
+- What if the token is invalid / expired? → Tool returns isError=true with an unauthorized message
+- What if the Kaiten API is unavailable (timeout, 5xx)? → Tool returns isError=true, retry logic in SDK
+- What if a tool argument is invalid (negative id, missing required parameter)? → Tool returns isError=true with an error description
 
 ## Requirements
 
 ### Functional Requirements
 
-- **FR-001**: Сервер MUST запускаться как stdio MCP-сервер
-- **FR-002**: Сервер MUST читать KAITEN_URL и KAITEN_TOKEN из environment variables
-- **FR-003**: Сервер MUST предоставлять tool для каждого публичного метода KaitenSDK
-- **FR-004**: Каждый tool MUST возвращать данные в формате JSON
-- **FR-005**: Каждый tool MUST возвращать isError=true при ошибках SDK с описанием ошибки
-- **FR-006**: Сервер MUST падать при старте если KAITEN_URL или KAITEN_TOKEN отсутствуют
-- **FR-007**: Сервер MUST использовать KaitenSDK как зависимость, без дублирования бизнес-логики
-- **FR-008**: Сервер MUST собираться как executable Swift package (Swift 6.0+, macOS + Linux)
-- **FR-009**: Сервер MUST иметь CI через GitHub Actions (билд + линт на macOS и Linux)
-- **FR-010**: При создании тега MUST запускаться release-джоба, которая собирает бинари (macOS + Linux) и прикрепляет их как артефакты к GitHub Release
-- **FR-011**: Сервер MUST иметь README с описанием, списком tools и примером подключения к Claude Desktop и OpenClaw
+- **FR-001**: The server MUST start as a stdio MCP server
+- **FR-002**: The server MUST read KAITEN_URL and KAITEN_TOKEN from environment variables
+- **FR-003**: The server MUST provide a tool for each public KaitenSDK method
+- **FR-004**: Each tool MUST return data in JSON format
+- **FR-005**: Each tool MUST return isError=true on SDK errors with an error description
+- **FR-006**: The server MUST crash at startup if KAITEN_URL or KAITEN_TOKEN are missing
+- **FR-007**: The server MUST use KaitenSDK as a dependency, without duplicating business logic
+- **FR-008**: The server MUST build as an executable Swift package (Swift 6.0+, macOS + Linux)
+- **FR-009**: The server MUST have CI via GitHub Actions (build + lint on macOS and Linux)
+- **FR-010**: On tag creation, a release job MUST run that builds binaries (macOS + Linux) and attaches them as artifacts to the GitHub Release
+- **FR-011**: The server MUST have a README with a description, tool list, and connection examples for Claude Desktop and OpenClaw
 
 ### Key Entities
 
-- **Tool**: MCP-инструмент = name + description + inputSchema + handler. 1:1 с методом KaitenSDK.
-- **KaitenClient**: Единственный экземпляр SDK-клиента, создаётся при старте, передаётся в handlers.
+- **Tool**: MCP tool = name + description + inputSchema + handler. 1:1 with a KaitenSDK method.
+- **KaitenClient**: Single SDK client instance, created at startup, passed to handlers.
 
 ## Architecture Decisions
 
-- **Вариант A (тонкий маппинг)**: каждый MCP tool — адаптер из 5-15 строк над методом SDK
-- **Без протокола-абстракции** на старте — KaitenClient используется напрямую. Протокол добавим когда появится второй потребитель (API)
+- **Option A (thin mapping)**: each MCP tool is an adapter of 5–15 lines over an SDK method
+- **No protocol abstraction** at the start — KaitenClient is used directly. A protocol will be added when a second consumer (API) appears
 - **MCP Swift SDK**: `modelcontextprotocol/swift-sdk` v0.10+
-- **Transport**: только stdio
-- **Без тестов** на старте — сервер тонкий, тестируем руками
-- **Write-операции**: SDK будет расширяться, архитектура tools не мешает добавлению
-- **`nonisolated(unsafe)` запрещён** — использовать `Mutex` из `Synchronization` (аналогично правилу FR-014 в KaitenSDK)
+- **Transport**: stdio only
+- **No tests** at the start — the server is thin, tested manually
+- **Write operations**: The SDK will be extended; the tools architecture does not prevent additions
+- **`nonisolated(unsafe)` is forbidden** — use `Mutex` from `Synchronization` (same as rule FR-014 in KaitenSDK)
 
 ## Success Criteria
 
-- **SC-001**: MCP-сервер запускается через `kaiten-mcp` и отвечает на `tools/list`
-- **SC-002**: Все 10 tools вызываются и возвращают корректный JSON из Kaiten API
-- **SC-003**: Ошибки SDK транслируются в isError=true с читаемым сообщением
-- **SC-004**: CI зелёный (билд + линт)
-- **SC-005**: README достаточен для подключения сервера к Claude Desktop / OpenClaw за 5 минут
+- **SC-001**: The MCP server starts via `kaiten-mcp` and responds to `tools/list`
+- **SC-002**: All 10 tools are callable and return correct JSON from the Kaiten API
+- **SC-003**: SDK errors are translated to isError=true with a readable message
+- **SC-004**: CI is green (build + lint)
+- **SC-005**: The README is sufficient to connect the server to Claude Desktop / OpenClaw in 5 minutes
