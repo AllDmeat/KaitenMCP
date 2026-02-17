@@ -41,5 +41,9 @@ jobs:
         if: runner.os == 'Linux'
         run: mise install swift
 
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
+
       - name: Build
         run: swift build
