@@ -58,24 +58,58 @@ let allTools: [Tool] = [
     // Cards
     Tool(
         name: "kaiten_list_cards",
-        description: "List cards on a board (paginated, max 100 per page)",
+        description: "List cards (paginated, max 100 per page). Supports 40+ filter parameters.",
         inputSchema: .object([
             "type": "object",
             "properties": .object([
-                "board_id": .object([
-                    "type": "integer",
-                    "description": "Board ID to list cards from",
-                ]),
-                "offset": .object([
-                    "type": "integer",
-                    "description": "Number of cards to skip (default: 0)",
-                ]),
-                "limit": .object([
-                    "type": "integer",
-                    "description": "Max cards to return (default/max: 100)",
-                ]),
+                "board_id": .object(["type": "integer", "description": "Board ID to list cards from"]),
+                "column_id": .object(["type": "integer", "description": "Column ID filter"]),
+                "lane_id": .object(["type": "integer", "description": "Lane ID filter"]),
+                "offset": .object(["type": "integer", "description": "Number of cards to skip (default: 0)"]),
+                "limit": .object(["type": "integer", "description": "Max cards to return (default/max: 100)"]),
+                "created_before": .object(["type": "string", "description": "ISO 8601 date — cards created before"]),
+                "created_after": .object(["type": "string", "description": "ISO 8601 date — cards created after"]),
+                "updated_before": .object(["type": "string", "description": "ISO 8601 date — cards updated before"]),
+                "updated_after": .object(["type": "string", "description": "ISO 8601 date — cards updated after"]),
+                "first_moved_in_progress_after": .object(["type": "string", "description": "ISO 8601 date filter"]),
+                "first_moved_in_progress_before": .object(["type": "string", "description": "ISO 8601 date filter"]),
+                "last_moved_to_done_at_after": .object(["type": "string", "description": "ISO 8601 date filter"]),
+                "last_moved_to_done_at_before": .object(["type": "string", "description": "ISO 8601 date filter"]),
+                "due_date_after": .object(["type": "string", "description": "ISO 8601 date — due date after"]),
+                "due_date_before": .object(["type": "string", "description": "ISO 8601 date — due date before"]),
+                "query": .object(["type": "string", "description": "Text search"]),
+                "search_fields": .object(["type": "string", "description": "Comma-separated fields to search"]),
+                "tag": .object(["type": "string", "description": "Tag name filter"]),
+                "tag_ids": .object(["type": "string", "description": "Comma-separated tag IDs"]),
+                "type_id": .object(["type": "integer", "description": "Card type ID"]),
+                "type_ids": .object(["type": "string", "description": "Comma-separated type IDs"]),
+                "member_ids": .object(["type": "string", "description": "Comma-separated member IDs"]),
+                "owner_id": .object(["type": "integer", "description": "Owner ID"]),
+                "owner_ids": .object(["type": "string", "description": "Comma-separated owner IDs"]),
+                "responsible_id": .object(["type": "integer", "description": "Responsible person ID"]),
+                "responsible_ids": .object(["type": "string", "description": "Comma-separated responsible IDs"]),
+                "column_ids": .object(["type": "string", "description": "Comma-separated column IDs"]),
+                "space_id": .object(["type": "integer", "description": "Space ID filter"]),
+                "external_id": .object(["type": "string", "description": "External ID filter"]),
+                "organizations_ids": .object(["type": "string", "description": "Comma-separated organization IDs"]),
+                "exclude_board_ids": .object(["type": "string", "description": "Exclude these board IDs"]),
+                "exclude_lane_ids": .object(["type": "string", "description": "Exclude these lane IDs"]),
+                "exclude_column_ids": .object(["type": "string", "description": "Exclude these column IDs"]),
+                "exclude_owner_ids": .object(["type": "string", "description": "Exclude these owner IDs"]),
+                "exclude_card_ids": .object(["type": "string", "description": "Exclude these card IDs"]),
+                "condition": .object(["type": "integer", "description": "Card condition: 1=queued, 2=in progress, 3=done"]),
+                "states": .object(["type": "string", "description": "Comma-separated states"]),
+                "archived": .object(["type": "boolean", "description": "Filter by archived status"]),
+                "asap": .object(["type": "boolean", "description": "Filter ASAP cards"]),
+                "overdue": .object(["type": "boolean", "description": "Filter overdue cards"]),
+                "done_on_time": .object(["type": "boolean", "description": "Filter done-on-time cards"]),
+                "with_due_date": .object(["type": "boolean", "description": "Filter cards with due date"]),
+                "is_request": .object(["type": "boolean", "description": "Filter service desk requests"]),
+                "order_by": .object(["type": "string", "description": "Sort field"]),
+                "order_direction": .object(["type": "string", "description": "Sort direction (asc/desc)"]),
+                "order_space_id": .object(["type": "integer", "description": "Space ID for ordering"]),
+                "additional_card_fields": .object(["type": "string", "description": "Extra fields to include"]),
             ]),
-            "required": .array(["board_id"]),
         ])
     ),
     Tool(
@@ -121,7 +155,6 @@ let allTools: [Tool] = [
             "required": .array(["card_id"]),
         ])
     ),
-
     // Spaces & Boards
     Tool(
         name: "kaiten_list_spaces",
@@ -183,6 +216,10 @@ let allTools: [Tool] = [
                     "type": "integer",
                     "description": "Board ID",
                 ]),
+                "condition": .object([
+                    "type": "integer",
+                    "description": "Lane condition: 1=queued, 2=in progress, 3=done",
+                ]),
             ]),
             "required": .array(["board_id"]),
         ])
@@ -194,7 +231,18 @@ let allTools: [Tool] = [
         description: "List all custom property definitions",
         inputSchema: .object([
             "type": "object",
-            "properties": .object([:]),
+            "properties": .object([
+                "offset": .object(["type": "integer", "description": "Number of items to skip (default: 0)"]),
+                "limit": .object(["type": "integer", "description": "Max items to return (default: 100)"]),
+                "query": .object(["type": "string", "description": "Search query"]),
+                "include_values": .object(["type": "boolean", "description": "Include property values"]),
+                "include_author": .object(["type": "boolean", "description": "Include author info"]),
+                "compact": .object(["type": "boolean", "description": "Compact response"]),
+                "load_by_ids": .object(["type": "boolean", "description": "Load by IDs mode"]),
+                "ids": .object(["type": "array", "description": "Array of property IDs to load", "items": .object(["type": "integer"])]),
+                "order_by": .object(["type": "string", "description": "Sort field"]),
+                "order_direction": .object(["type": "string", "description": "Sort direction (asc/desc)"]),
+            ]),
         ])
     ),
     Tool(
@@ -279,10 +327,68 @@ await server.withMethodHandler(CallTool.self) { params in
         let json: String = try await {
             switch params.name {
             case "kaiten_list_cards":
-                let boardId = try requireInt(params, key: "board_id")
+                let boardId = optionalInt(params, key: "board_id")
+                let columnId = optionalInt(params, key: "column_id")
+                let laneId = optionalInt(params, key: "lane_id")
                 let offset = optionalInt(params, key: "offset") ?? 0
                 let limit = optionalInt(params, key: "limit") ?? 100
-                let page = try await kaiten.listCards(boardId: boardId, offset: offset, limit: limit)
+
+                // Date parsing helper
+                let iso = ISO8601DateFormatter()
+                iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                let iso2 = ISO8601DateFormatter()
+                iso2.formatOptions = [.withInternetDateTime]
+                func parseDate(_ key: String) -> Date? {
+                    guard let s = optionalString(params, key: key) else { return nil }
+                    return iso.date(from: s) ?? iso2.date(from: s)
+                }
+
+                let filter = KaitenClient.CardFilter(
+                    createdBefore: parseDate("created_before"),
+                    createdAfter: parseDate("created_after"),
+                    updatedBefore: parseDate("updated_before"),
+                    updatedAfter: parseDate("updated_after"),
+                    firstMovedInProgressAfter: parseDate("first_moved_in_progress_after"),
+                    firstMovedInProgressBefore: parseDate("first_moved_in_progress_before"),
+                    lastMovedToDoneAtAfter: parseDate("last_moved_to_done_at_after"),
+                    lastMovedToDoneAtBefore: parseDate("last_moved_to_done_at_before"),
+                    dueDateAfter: parseDate("due_date_after"),
+                    dueDateBefore: parseDate("due_date_before"),
+                    query: optionalString(params, key: "query"),
+                    searchFields: optionalString(params, key: "search_fields"),
+                    tag: optionalString(params, key: "tag"),
+                    tagIds: optionalString(params, key: "tag_ids"),
+                    typeId: optionalInt(params, key: "type_id"),
+                    typeIds: optionalString(params, key: "type_ids"),
+                    memberIds: optionalString(params, key: "member_ids"),
+                    ownerId: optionalInt(params, key: "owner_id"),
+                    ownerIds: optionalString(params, key: "owner_ids"),
+                    responsibleId: optionalInt(params, key: "responsible_id"),
+                    responsibleIds: optionalString(params, key: "responsible_ids"),
+                    columnIds: optionalString(params, key: "column_ids"),
+                    spaceId: optionalInt(params, key: "space_id"),
+                    externalId: optionalString(params, key: "external_id"),
+                    organizationsIds: optionalString(params, key: "organizations_ids"),
+                    excludeBoardIds: optionalString(params, key: "exclude_board_ids"),
+                    excludeLaneIds: optionalString(params, key: "exclude_lane_ids"),
+                    excludeColumnIds: optionalString(params, key: "exclude_column_ids"),
+                    excludeOwnerIds: optionalString(params, key: "exclude_owner_ids"),
+                    excludeCardIds: optionalString(params, key: "exclude_card_ids"),
+                    condition: optionalInt(params, key: "condition"),
+                    states: optionalString(params, key: "states"),
+                    archived: optionalBool(params, key: "archived"),
+                    asap: optionalBool(params, key: "asap"),
+                    overdue: optionalBool(params, key: "overdue"),
+                    doneOnTime: optionalBool(params, key: "done_on_time"),
+                    withDueDate: optionalBool(params, key: "with_due_date"),
+                    isRequest: optionalBool(params, key: "is_request"),
+                    orderBy: optionalString(params, key: "order_by"),
+                    orderDirection: optionalString(params, key: "order_direction"),
+                    orderSpaceId: optionalInt(params, key: "order_space_id"),
+                    additionalCardFields: optionalString(params, key: "additional_card_fields")
+                )
+
+                let page = try await kaiten.listCards(boardId: boardId, columnId: columnId, laneId: laneId, offset: offset, limit: limit, filter: filter)
                 return toJSON(page)
 
             case "kaiten_get_card":
@@ -321,11 +427,22 @@ await server.withMethodHandler(CallTool.self) { params in
 
             case "kaiten_get_board_lanes":
                 let boardId = try requireInt(params, key: "board_id")
-                let lanes = try await kaiten.getBoardLanes(boardId: boardId)
+                let condition = optionalInt(params, key: "condition")
+                let lanes = try await kaiten.getBoardLanes(boardId: boardId, condition: condition)
                 return toJSON(lanes)
 
             case "kaiten_list_custom_properties":
-                let props = try await kaiten.listCustomProperties()
+                let offset = optionalInt(params, key: "offset") ?? 0
+                let limit = optionalInt(params, key: "limit") ?? 100
+                let query = optionalString(params, key: "query")
+                let includeValues = optionalBool(params, key: "include_values")
+                let includeAuthor = optionalBool(params, key: "include_author")
+                let compact = optionalBool(params, key: "compact")
+                let loadByIds = optionalBool(params, key: "load_by_ids")
+                let ids: [Int]? = (params.arguments?["ids"]?.arrayValue != nil) ? try requireIntArray(params, key: "ids") : nil
+                let orderBy = optionalString(params, key: "order_by")
+                let orderDirection = optionalString(params, key: "order_direction")
+                let props = try await kaiten.listCustomProperties(offset: offset, limit: limit, query: query, includeValues: includeValues, includeAuthor: includeAuthor, compact: compact, loadByIds: loadByIds, ids: ids, orderBy: orderBy, orderDirection: orderDirection)
                 return toJSON(props)
 
             case "kaiten_get_custom_property":
@@ -486,6 +603,10 @@ enum ToolError: Error, CustomStringConvertible {
 
 @Sendable func optionalString(_ params: CallTool.Parameters, key: String) -> String? {
     params.arguments?[key]?.stringValue
+}
+
+@Sendable func optionalBool(_ params: CallTool.Parameters, key: String) -> Bool? {
+    params.arguments?[key]?.boolValue
 }
 
 @Sendable func requireIntArray(_ params: CallTool.Parameters, key: String) throws -> [Int] {
