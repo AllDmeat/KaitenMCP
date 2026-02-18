@@ -9,65 +9,34 @@ Built on top of [kaiten-sdk](https://github.com/AllDmeat/kaiten-sdk).
 ## Requirements
 
 - Swift 6.2+
-- macOS 15+ or Linux (x86_64, ARM64)
+- macOS 15+ (ARM) / Linux (x86-64, ARM)
 
 ## Installation
 
 ### mise (recommended)
 
-[mise](https://mise.jdx.dev) — a tool manager. It will install the required version automatically:
+[mise](https://mise.jdx.dev) — a tool version manager. It will install the required version automatically:
 
 ```bash
 mise use github:AllDmeat/kaiten-mcp
 ```
 
-### From GitHub Release
+### GitHub Release
 
-Download the binary for your platform from the [releases page](https://github.com/AllDmeat/kaiten-mcp/releases):
+Download the binary for your platform from the [releases page](https://github.com/AllDmeat/kaiten-mcp/releases).
 
-- `kaiten-mcp_<version>_darwin_arm64.tar.gz` — macOS (Apple Silicon)
-- `kaiten-mcp_<version>_linux_x86_64.tar.gz` — Linux x86_64
-- `kaiten-mcp_<version>_linux_arm64.tar.gz` — Linux ARM64
-
-### From source
+### From Source
 
 ```bash
 swift build -c release
 # Binary: .build/release/kaiten-mcp
 ```
 
-## Tools
+## Usage
 
-| Tool | Description | Parameters |
-|------|-------------|------------|
-| `kaiten_list_spaces` | List spaces | — |
-| `kaiten_list_boards` | Boards in a space | `space_id` |
-| `kaiten_get_board` | Board by ID | `id` |
-| `kaiten_get_board_columns` | Board columns | `board_id` |
-| `kaiten_get_board_lanes` | Board lanes | `board_id` |
-| `kaiten_list_cards` | Cards on a board (paginated) | `board_id`, `offset?`, `limit?` |
-| `kaiten_get_card` | Card by ID | `id` |
-| `kaiten_get_card_members` | Card members | `card_id` |
-| `kaiten_list_custom_properties` | Custom properties | — |
-| `kaiten_get_custom_property` | Custom property by ID | `id` |
-| `kaiten_configure` | Manage preferences (boards/spaces) | `action`, `ids?`, `id?`, `alias?` |
-| `kaiten_get_preferences` | Current preferences | — |
-| `kaiten_set_token` | Save URL and token to config | `url?`, `token?` |
+### Configuration
 
-## Configuration
-
-Credentials are stored in `config.json`, user preferences in `preferences.json`:
-
-| File | Path | Contents |
-|------|------|----------|
-| `config.json` | `~/.config/kaiten-mcp/config.json` | `url`, `token` |
-| `preferences.json` | `~/.config/kaiten-mcp/preferences.json` | `myBoards`, `mySpaces` |
-
-The path is the same on all platforms (macOS, Linux).
-
-`config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/kaiten-sdk). You only need to configure it once.
-
-`config.json`:
+Credentials are stored in `~/.config/kaiten-mcp/config.json` (shared with the [CLI](https://github.com/AllDmeat/kaiten-sdk)):
 
 ```json
 {
@@ -76,26 +45,13 @@ The path is the same on all platforms (macOS, Linux).
 }
 ```
 
-`preferences.json`:
-
-```json
-{
-  "myBoards": [
-    { "id": 123, "alias": "team" }
-  ],
-  "mySpaces": [
-    { "id": 456 }
-  ]
-}
-```
-
 You can also configure credentials via the `kaiten_set_token` MCP tool after connecting the server.
 
 Kaiten token: Profile Settings → API Tokens → Create.
 
-## Connecting
+### Connecting
 
-### Claude Desktop
+#### Claude Desktop
 
 `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
@@ -109,7 +65,7 @@ Kaiten token: Profile Settings → API Tokens → Create.
 }
 ```
 
-### Cursor
+#### Cursor
 
 Settings → MCP Servers → Add:
 
@@ -118,6 +74,108 @@ Settings → MCP Servers → Add:
   "kaiten": {
     "command": "/path/to/kaiten-mcp"
   }
+}
+```
+
+## API Reference
+
+### Cards
+
+| Tool | Description |
+|------|-------------|
+| `kaiten_list_cards` | List cards on a board (paginated) |
+| `kaiten_get_card` | Get a card by ID |
+| `kaiten_create_card` | Create a new card |
+| `kaiten_update_card` | Update a card |
+| `kaiten_get_card_members` | Get card members |
+| `kaiten_get_card_comments` | Get card comments |
+| `kaiten_create_comment` | Add a comment to a card |
+| `kaiten_get_card_baselines` | Get card baselines |
+
+### Spaces
+
+| Tool | Description |
+|------|-------------|
+| `kaiten_list_spaces` | List all spaces |
+| `kaiten_create_space` | Create a space |
+| `kaiten_get_space` | Get a space by ID |
+| `kaiten_update_space` | Update a space |
+| `kaiten_delete_space` | Delete a space |
+
+### Boards
+
+| Tool | Description |
+|------|-------------|
+| `kaiten_list_boards` | List boards in a space |
+| `kaiten_get_board` | Get a board by ID |
+| `kaiten_create_board` | Create a board |
+| `kaiten_update_board` | Update a board |
+| `kaiten_delete_board` | Delete a board |
+
+### Columns
+
+| Tool | Description |
+|------|-------------|
+| `kaiten_get_board_columns` | Get columns of a board |
+| `kaiten_create_column` | Create a column |
+| `kaiten_update_column` | Update a column |
+| `kaiten_delete_column` | Delete a column |
+| `kaiten_list_subcolumns` | List subcolumns |
+| `kaiten_create_subcolumn` | Create a subcolumn |
+| `kaiten_update_subcolumn` | Update a subcolumn |
+| `kaiten_delete_subcolumn` | Delete a subcolumn |
+
+### Lanes
+
+| Tool | Description |
+|------|-------------|
+| `kaiten_get_board_lanes` | Get lanes of a board |
+| `kaiten_create_lane` | Create a lane |
+| `kaiten_update_lane` | Update a lane |
+| `kaiten_delete_lane` | Delete a lane |
+
+### Custom Properties
+
+| Tool | Description |
+|------|-------------|
+| `kaiten_list_custom_properties` | List custom property definitions |
+| `kaiten_get_custom_property` | Get a custom property by ID |
+
+### Sprints
+
+| Tool | Description |
+|------|-------------|
+| `kaiten_get_sprint_summary` | Get sprint summary |
+
+### Settings
+
+| Tool | Description |
+|------|-------------|
+| `kaiten_configure` | Manage preferences (boards/spaces) |
+| `kaiten_get_preferences` | Get current preferences |
+| `kaiten_set_token` | Save URL and token to config |
+
+## Configuration
+
+The config file at `~/.config/kaiten-mcp/config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/kaiten-sdk). You only need to configure it once.
+
+```json
+{
+  "url": "https://your-company.kaiten.ru/api/latest",
+  "token": "your-api-token"
+}
+```
+
+User preferences are stored separately in `~/.config/kaiten-mcp/preferences.json`:
+
+```json
+{
+  "myBoards": [
+    { "id": 123, "alias": "team" }
+  ],
+  "mySpaces": [
+    { "id": 456 }
+  ]
 }
 ```
 
