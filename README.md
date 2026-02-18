@@ -46,8 +46,6 @@ Credentials are stored in `~/.config/kaiten/config.json` (shared with the [CLI](
 }
 ```
 
-You can also set the token later via the `kaiten_set_token` MCP tool after connecting the server.
-
 ### 3. Connect to Your AI Tool
 
 See the **[Integration Guide](docs/integration-guide.md)** for step-by-step instructions for:
@@ -136,7 +134,6 @@ See the **[Integration Guide](docs/integration-guide.md)** for step-by-step inst
 |------|-------------|
 | `kaiten_configure` | Manage preferences (boards/spaces) |
 | `kaiten_get_preferences` | Get current preferences |
-| `kaiten_set_token` | Save URL and token to config |
 
 ## Configuration
 

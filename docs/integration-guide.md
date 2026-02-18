@@ -6,6 +6,16 @@ How to connect **kaiten-mcp** to popular AI tools.
 
 All examples below use `kaiten-mcp` as the command. If you installed via [mise](https://mise.jdx.dev), it is already in your `PATH`.
 
+## Table of Contents
+
+- [Claude Desktop](#claude-desktop)
+- [Claude Code (CLI)](#claude-code-cli)
+- [GitHub Copilot (VS Code)](#github-copilot-vs-code)
+- [GitHub Copilot CLI](#github-copilot-cli)
+- [Cursor](#cursor)
+- [OpenAI Codex CLI](#openai-codex-cli)
+- [Windsurf](#windsurf)
+
 ---
 
 ## Claude Desktop

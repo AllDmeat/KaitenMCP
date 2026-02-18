@@ -32,11 +32,11 @@ log("Config loaded from \(Config.filePath.path): url=\(config.url != nil ? "set"
 log("Preferences loaded from \(Preferences.filePath.path): boards=\(preferences.boardIds?.description ?? "none"), spaces=\(preferences.spaceIds?.description ?? "none")")
 
 guard let kaitenURL = config.url else {
-    exitWithError("Error: url not set. Run kaiten_set_token tool or edit \(Config.filePath.path)")
+    exitWithError("Error: url not set. Edit \(Config.filePath.path)")
 }
 
 guard let kaitenToken = config.token else {
-    exitWithError("Error: token not set. Run kaiten_set_token tool or edit \(Config.filePath.path)")
+    exitWithError("Error: token not set. Edit \(Config.filePath.path)")
 }
 
 let kaiten = try KaitenClient(baseURL: kaitenURL, token: kaitenToken)
@@ -645,24 +645,6 @@ let allTools: [Tool] = [
             "required": .array(["card_id"]),
         ])
     ),
-
-    Tool(
-        name: "kaiten_set_token",
-        description: "Store Kaiten API token and URL in user config. Token is saved securely with restricted file permissions (0600). Env vars always override config.",
-        inputSchema: .object([
-            "type": "object",
-            "properties": .object([
-                "token": .object([
-                    "type": "string",
-                    "description": "Kaiten API token",
-                ]),
-                "url": .object([
-                    "type": "string",
-                    "description": "Kaiten API base URL (e.g. https://mycompany.kaiten.ru)",
-                ]),
-            ]),
-        ])
-    ),
 ]
 
 // MARK: - Handlers
@@ -879,23 +861,6 @@ await server.withMethodHandler(CallTool.self) { params in
                     myBoards: preferences.myBoards,
                     mySpaces: preferences.mySpaces
                 )
-                return toJSON(response)
-
-            case "kaiten_set_token":
-                var cfg = Config.load()
-                if let token = optionalString(params, key: "token") {
-                    cfg.token = token
-                }
-                if let url = optionalString(params, key: "url") {
-                    cfg.url = url
-                }
-                try cfg.save()
-                // Mask token in response
-                var response = cfg
-                if let t = response.token {
-                    let masked = String(t.prefix(4)) + String(repeating: "*", count: max(0, t.count - 4))
-                    response.token = masked
-                }
                 return toJSON(response)
 
             case "kaiten_configure":
