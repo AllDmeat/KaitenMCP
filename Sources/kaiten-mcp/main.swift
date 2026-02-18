@@ -986,7 +986,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     title: optionalString(params, key: "title"),
                     externalId: optionalString(params, key: "external_id"),
                     sortOrder: optionalDouble(params, key: "sort_order"),
-                    access: optionalInt(params, key: "access"),
+                    access: optionalString(params, key: "access"),
                     parentEntityUid: optionalString(params, key: "parent_entity_uid")
                 )
                 return toJSON(space)
