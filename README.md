@@ -72,6 +72,9 @@ See the **[Integration Guide](docs/integration-guide.md)** for step-by-step inst
 | `kaiten_get_card_comments` | Get card comments |
 | `kaiten_create_comment` | Add a comment to a card |
 | `kaiten_get_card_baselines` | Get card baselines |
+| `kaiten_list_external_links` | List external links on a card |
+| `kaiten_add_external_link` | Add an external link to a card |
+| `kaiten_remove_external_link` | Remove an external link from a card |
 
 ### Spaces
 

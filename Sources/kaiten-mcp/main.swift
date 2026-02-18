@@ -645,6 +645,44 @@ let allTools: [Tool] = [
             "required": .array(["card_id"]),
         ])
     ),
+
+    // External Links
+    Tool(
+        name: "kaiten_list_external_links",
+        description: "List external links on a card",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "card_id": .object(["type": "integer", "description": "Card ID"]),
+            ]),
+            "required": .array(["card_id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_add_external_link",
+        description: "Add an external link to a card",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "card_id": .object(["type": "integer", "description": "Card ID"]),
+                "url": .object(["type": "string", "description": "URL of the external link"]),
+                "title": .object(["type": "string", "description": "Title/description of the link"]),
+            ]),
+            "required": .array(["card_id", "url"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_remove_external_link",
+        description: "Remove an external link from a card",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "card_id": .object(["type": "integer", "description": "Card ID"]),
+                "link_id": .object(["type": "integer", "description": "External link ID"]),
+            ]),
+            "required": .array(["card_id", "link_id"]),
+        ])
+    ),
 ]
 
 // MARK: - Handlers
@@ -1104,6 +1142,25 @@ await server.withMethodHandler(CallTool.self) { params in
                 let cardId = try requireInt(params, key: "card_id")
                 let baselines = try await kaiten.getCardBaselines(cardId: cardId)
                 return toJSON(baselines)
+
+            // External Links
+            case "kaiten_list_external_links":
+                let cardId = try requireInt(params, key: "card_id")
+                let links = try await kaiten.listExternalLinks(cardId: cardId)
+                return toJSON(links)
+
+            case "kaiten_add_external_link":
+                let cardId = try requireInt(params, key: "card_id")
+                let url = try requireString(params, key: "url")
+                let title = optionalString(params, key: "title")
+                let link = try await kaiten.createExternalLink(cardId: cardId, url: url, description: title)
+                return toJSON(link)
+
+            case "kaiten_remove_external_link":
+                let cardId = try requireInt(params, key: "card_id")
+                let linkId = try requireInt(params, key: "link_id")
+                let deletedId = try await kaiten.removeExternalLink(cardId: cardId, linkId: linkId)
+                return toJSON(["id": deletedId])
 
             default:
                 throw ToolError.unknownTool(params.name)
