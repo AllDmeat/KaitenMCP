@@ -1,15 +1,12 @@
 # kaiten-mcp
 
 [![Build](https://github.com/AllDmeat/kaiten-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/AllDmeat/kaiten-mcp/actions/workflows/ci.yml)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FAllDmeat%2Fkaiten-mcp%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/AllDmeat/kaiten-mcp)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FAllDmeat%2Fkaiten-mcp%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/AllDmeat/kaiten-mcp)
 
 MCP server for [Kaiten](https://kaiten.ru) — gives AI agents access to boards, cards, and properties via [Model Context Protocol](https://modelcontextprotocol.io).
 
 Built on top of [kaiten-sdk](https://github.com/AllDmeat/kaiten-sdk).
-
-## Requirements
-
-- Swift 6.2+
-- macOS 15+ (ARM) / Linux (x86-64, ARM)
 
 ## Installation
 
@@ -18,7 +15,7 @@ Built on top of [kaiten-sdk](https://github.com/AllDmeat/kaiten-sdk).
 [mise](https://mise.jdx.dev) — a tool version manager. It will install the required version automatically:
 
 ```bash
-mise use github:AllDmeat/kaiten-mcp
+mise use github:alldmeat/kaiten-mcp
 ```
 
 ### GitHub Release
@@ -34,48 +31,32 @@ swift build -c release
 
 ## Usage
 
-### Configuration
+### 1. Get a Kaiten API Token
+
+Get your API token at `https://<your-company>.kaiten.ru/profile/api-key`.
+
+### 2. Configure Credentials
 
 Credentials are stored in `~/.config/kaiten/config.json` (shared with the [CLI](https://github.com/AllDmeat/kaiten-sdk)):
 
 ```json
 {
-  "url": "https://your-company.kaiten.ru/api/latest",
-  "token": "your-api-token"
+  "url": "https://<your-company>.kaiten.ru/api/latest",
+  "token": "<your-api-token>"
 }
 ```
 
-You can also configure credentials via the `kaiten_set_token` MCP tool after connecting the server.
+### 3. Connect to Your AI Tool
 
-Kaiten token: Profile Settings → API Tokens → Create.
+See the **[Integration Guide](docs/integration-guide.md)** for step-by-step instructions for:
 
-### Connecting
-
-#### Claude Desktop
-
-`~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "kaiten": {
-      "command": "/path/to/kaiten-mcp"
-    }
-  }
-}
-```
-
-#### Cursor
-
-Settings → MCP Servers → Add:
-
-```json
-{
-  "kaiten": {
-    "command": "/path/to/kaiten-mcp"
-  }
-}
-```
+- Claude Desktop
+- Claude Code (CLI)
+- GitHub Copilot (VS Code)
+- GitHub Copilot CLI
+- Cursor
+- OpenAI Codex CLI
+- Windsurf
 
 ## API Reference
 
@@ -153,18 +134,10 @@ Settings → MCP Servers → Add:
 |------|-------------|
 | `kaiten_configure` | Manage preferences (boards/spaces) |
 | `kaiten_get_preferences` | Get current preferences |
-| `kaiten_set_token` | Save URL and token to config |
 
 ## Configuration
 
-The config file at `~/.config/kaiten/config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/kaiten-sdk). You only need to configure it once.
-
-```json
-{
-  "url": "https://your-company.kaiten.ru/api/latest",
-  "token": "your-api-token"
-}
-```
+The config file at `~/.config/kaiten/config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/kaiten-sdk). You only need to configure it once (see [Configure Credentials](#2-configure-credentials) above).
 
 User preferences are stored separately in `~/.config/kaiten/preferences.json`:
 
@@ -178,6 +151,11 @@ User preferences are stored separately in `~/.config/kaiten/preferences.json`:
   ]
 }
 ```
+
+## Requirements
+
+- Swift 6.2+
+- macOS 15+ (ARM) / Linux (x86-64, ARM)
 
 ## License
 
