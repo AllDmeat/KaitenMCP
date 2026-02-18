@@ -1038,7 +1038,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     sortOrder: optionalDouble(params, key: "sort_order"),
                     type: optionalInt(params, key: "type"),
                     wipLimit: optionalInt(params, key: "wip_limit"),
-                    wipLimitType: optionalString(params, key: "wip_limit_type"),
+                    wipLimitType: optionalInt(params, key: "wip_limit_type"),
                     colCount: optionalInt(params, key: "col_count")
                 )
                 return toJSON(column)
@@ -1053,7 +1053,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     sortOrder: optionalDouble(params, key: "sort_order"),
                     type: optionalInt(params, key: "type"),
                     wipLimit: optionalInt(params, key: "wip_limit"),
-                    wipLimitType: optionalString(params, key: "wip_limit_type"),
+                    wipLimitType: optionalInt(params, key: "wip_limit_type"),
                     colCount: optionalInt(params, key: "col_count")
                 )
                 return toJSON(column)
@@ -1108,7 +1108,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     title: title,
                     sortOrder: optionalDouble(params, key: "sort_order"),
                     wipLimit: optionalInt(params, key: "wip_limit"),
-                    wipLimitType: optionalString(params, key: "wip_limit_type"),
+                    wipLimitType: optionalInt(params, key: "wip_limit_type"),
                     rowCount: optionalInt(params, key: "row_count")
                 )
                 return toJSON(lane)
@@ -1122,7 +1122,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     title: optionalString(params, key: "title"),
                     sortOrder: optionalDouble(params, key: "sort_order"),
                     wipLimit: optionalInt(params, key: "wip_limit"),
-                    wipLimitType: optionalString(params, key: "wip_limit_type"),
+                    wipLimitType: optionalInt(params, key: "wip_limit_type"),
                     rowCount: optionalInt(params, key: "row_count"),
                     condition: optionalInt(params, key: "condition")
                 )
