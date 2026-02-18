@@ -36,7 +36,7 @@ swift build -c release
 
 ### Configuration
 
-Credentials are stored in `~/.config/kaiten-mcp/config.json` (shared with the [CLI](https://github.com/AllDmeat/kaiten-sdk)):
+Credentials are stored in `~/.config/kaiten/config.json` (shared with the [CLI](https://github.com/AllDmeat/kaiten-sdk)):
 
 ```json
 {
@@ -157,7 +157,7 @@ Settings → MCP Servers → Add:
 
 ## Configuration
 
-The config file at `~/.config/kaiten-mcp/config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/kaiten-sdk). You only need to configure it once.
+The config file at `~/.config/kaiten/config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/kaiten-sdk). You only need to configure it once.
 
 ```json
 {
@@ -166,7 +166,7 @@ The config file at `~/.config/kaiten-mcp/config.json` is shared between MCP and 
 }
 ```
 
-User preferences are stored separately in `~/.config/kaiten-mcp/preferences.json`:
+User preferences are stored separately in `~/.config/kaiten/preferences.json`:
 
 ```json
 {
