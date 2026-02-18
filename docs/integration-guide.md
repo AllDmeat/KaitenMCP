@@ -8,33 +8,12 @@ All examples below use `kaiten-mcp` as the command. If you installed via [mise](
 
 ## Table of Contents
 
-- [Claude Desktop](#claude-desktop)
 - [Claude Code (CLI)](#claude-code-cli)
-- [GitHub Copilot (VS Code)](#github-copilot-vs-code)
+- [VS Code](#vs-code)
 - [GitHub Copilot CLI](#github-copilot-cli)
 - [Cursor](#cursor)
 - [OpenAI Codex CLI](#openai-codex-cli)
 - [Windsurf](#windsurf)
-
----
-
-## Claude Desktop
-
-> User-level only — Claude Desktop does not support project-level MCP configuration.
-
-Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
-
-```json
-{
-  "mcpServers": {
-    "kaiten": {
-      "command": "kaiten-mcp"
-    }
-  }
-}
-```
-
-Restart Claude Desktop to apply.
 
 ---
 
@@ -82,7 +61,9 @@ claude mcp add kaiten --scope user -- kaiten-mcp
 
 ---
 
-## GitHub Copilot (VS Code)
+## VS Code
+
+VS Code has built-in MCP support (v1.99+). Any extension that acts as an MCP consumer — most notably GitHub Copilot — automatically picks up the servers configured below.
 
 ### Project-level
 
