@@ -1,15 +1,12 @@
 # kaiten-mcp
 
 [![Build](https://github.com/AllDmeat/kaiten-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/AllDmeat/kaiten-mcp/actions/workflows/ci.yml)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FAllDmeat%2Fkaiten-mcp%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/AllDmeat/kaiten-mcp)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FAllDmeat%2Fkaiten-mcp%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/AllDmeat/kaiten-mcp)
 
 MCP server for [Kaiten](https://kaiten.ru) — gives AI agents access to boards, cards, and properties via [Model Context Protocol](https://modelcontextprotocol.io).
 
 Built on top of [kaiten-sdk](https://github.com/AllDmeat/kaiten-sdk).
-
-## Requirements
-
-- Swift 6.2+
-- macOS 15+ (ARM) / Linux (x86-64, ARM)
 
 ## Installation
 
@@ -18,7 +15,7 @@ Built on top of [kaiten-sdk](https://github.com/AllDmeat/kaiten-sdk).
 [mise](https://mise.jdx.dev) — a tool version manager. It will install the required version automatically:
 
 ```bash
-mise use github:AllDmeat/kaiten-mcp
+mise use github:alldmeat/kaiten-mcp
 ```
 
 ### GitHub Release
@@ -178,6 +175,11 @@ User preferences are stored separately in `~/.config/kaiten/preferences.json`:
   ]
 }
 ```
+
+## Requirements
+
+- Swift 6.2+
+- macOS 15+ (ARM) / Linux (x86-64, ARM)
 
 ## License
 
