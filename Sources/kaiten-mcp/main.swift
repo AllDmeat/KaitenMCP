@@ -370,6 +370,282 @@ let allTools: [Tool] = [
             "required": .array(["action"]),
         ])
     ),
+    // Sprint
+    Tool(
+        name: "kaiten_get_sprint_summary",
+        description: "Get sprint summary by ID",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "id": .object(["type": "integer", "description": "Sprint ID"]),
+                "exclude_deleted_cards": .object(["type": "boolean", "description": "Exclude deleted cards from summary"]),
+            ]),
+            "required": .array(["id"]),
+        ])
+    ),
+
+    // Spaces CRUD
+    Tool(
+        name: "kaiten_create_space",
+        description: "Create a new space",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "title": .object(["type": "string", "description": "Space title"]),
+                "external_id": .object(["type": "string", "description": "External ID"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+            ]),
+            "required": .array(["title"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_get_space",
+        description: "Get a space by ID",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "id": .object(["type": "integer", "description": "Space ID"]),
+            ]),
+            "required": .array(["id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_update_space",
+        description: "Update a space by ID",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "id": .object(["type": "integer", "description": "Space ID"]),
+                "title": .object(["type": "string", "description": "New title"]),
+                "external_id": .object(["type": "string", "description": "External ID"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+                "access": .object(["type": "integer", "description": "Access level"]),
+                "parent_entity_uid": .object(["type": "string", "description": "Parent entity UID"]),
+            ]),
+            "required": .array(["id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_delete_space",
+        description: "Delete a space by ID",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "id": .object(["type": "integer", "description": "Space ID"]),
+            ]),
+            "required": .array(["id"]),
+        ])
+    ),
+
+    // Boards CRUD
+    Tool(
+        name: "kaiten_create_board",
+        description: "Create a new board in a space",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "space_id": .object(["type": "integer", "description": "Space ID"]),
+                "title": .object(["type": "string", "description": "Board title"]),
+                "description": .object(["type": "string", "description": "Board description"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+                "external_id": .object(["type": "string", "description": "External ID"]),
+            ]),
+            "required": .array(["space_id", "title"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_update_board",
+        description: "Update a board",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "space_id": .object(["type": "integer", "description": "Space ID"]),
+                "id": .object(["type": "integer", "description": "Board ID"]),
+                "title": .object(["type": "string", "description": "New title"]),
+                "description": .object(["type": "string", "description": "New description"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+                "external_id": .object(["type": "string", "description": "External ID"]),
+            ]),
+            "required": .array(["space_id", "id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_delete_board",
+        description: "Delete a board",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "space_id": .object(["type": "integer", "description": "Space ID"]),
+                "id": .object(["type": "integer", "description": "Board ID"]),
+            ]),
+            "required": .array(["space_id", "id"]),
+        ])
+    ),
+
+    // Columns CRUD
+    Tool(
+        name: "kaiten_create_column",
+        description: "Create a column on a board",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "board_id": .object(["type": "integer", "description": "Board ID"]),
+                "title": .object(["type": "string", "description": "Column title"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+                "type": .object(["type": "integer", "description": "Column type"]),
+                "wip_limit": .object(["type": "integer", "description": "WIP limit"]),
+                "wip_limit_type": .object(["type": "string", "description": "WIP limit type"]),
+                "col_count": .object(["type": "integer", "description": "Column count"]),
+            ]),
+            "required": .array(["board_id", "title"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_update_column",
+        description: "Update a column on a board",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "board_id": .object(["type": "integer", "description": "Board ID"]),
+                "id": .object(["type": "integer", "description": "Column ID"]),
+                "title": .object(["type": "string", "description": "New title"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+                "type": .object(["type": "integer", "description": "Column type"]),
+                "wip_limit": .object(["type": "integer", "description": "WIP limit"]),
+                "wip_limit_type": .object(["type": "string", "description": "WIP limit type"]),
+                "col_count": .object(["type": "integer", "description": "Column count"]),
+            ]),
+            "required": .array(["board_id", "id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_delete_column",
+        description: "Delete a column from a board",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "board_id": .object(["type": "integer", "description": "Board ID"]),
+                "id": .object(["type": "integer", "description": "Column ID"]),
+            ]),
+            "required": .array(["board_id", "id"]),
+        ])
+    ),
+
+    // Subcolumns
+    Tool(
+        name: "kaiten_list_subcolumns",
+        description: "List subcolumns of a column",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "column_id": .object(["type": "integer", "description": "Column ID"]),
+            ]),
+            "required": .array(["column_id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_create_subcolumn",
+        description: "Create a subcolumn",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "column_id": .object(["type": "integer", "description": "Column ID"]),
+                "title": .object(["type": "string", "description": "Subcolumn title"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+                "type": .object(["type": "integer", "description": "Subcolumn type"]),
+            ]),
+            "required": .array(["column_id", "title"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_update_subcolumn",
+        description: "Update a subcolumn",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "column_id": .object(["type": "integer", "description": "Column ID"]),
+                "id": .object(["type": "integer", "description": "Subcolumn ID"]),
+                "title": .object(["type": "string", "description": "New title"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+                "type": .object(["type": "integer", "description": "Subcolumn type"]),
+            ]),
+            "required": .array(["column_id", "id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_delete_subcolumn",
+        description: "Delete a subcolumn",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "column_id": .object(["type": "integer", "description": "Column ID"]),
+                "id": .object(["type": "integer", "description": "Subcolumn ID"]),
+            ]),
+            "required": .array(["column_id", "id"]),
+        ])
+    ),
+
+    // Lanes CRUD
+    Tool(
+        name: "kaiten_create_lane",
+        description: "Create a lane on a board",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "board_id": .object(["type": "integer", "description": "Board ID"]),
+                "title": .object(["type": "string", "description": "Lane title"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+                "wip_limit": .object(["type": "integer", "description": "WIP limit"]),
+                "wip_limit_type": .object(["type": "string", "description": "WIP limit type"]),
+                "row_count": .object(["type": "integer", "description": "Row count"]),
+            ]),
+            "required": .array(["board_id", "title"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_update_lane",
+        description: "Update a lane on a board",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "board_id": .object(["type": "integer", "description": "Board ID"]),
+                "id": .object(["type": "integer", "description": "Lane ID"]),
+                "title": .object(["type": "string", "description": "New title"]),
+                "sort_order": .object(["type": "integer", "description": "Sort order"]),
+                "wip_limit": .object(["type": "integer", "description": "WIP limit"]),
+                "wip_limit_type": .object(["type": "string", "description": "WIP limit type"]),
+                "row_count": .object(["type": "integer", "description": "Row count"]),
+                "condition": .object(["type": "integer", "description": "Lane condition"]),
+            ]),
+            "required": .array(["board_id", "id"]),
+        ])
+    ),
+    Tool(
+        name: "kaiten_delete_lane",
+        description: "Delete a lane from a board",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "board_id": .object(["type": "integer", "description": "Board ID"]),
+                "id": .object(["type": "integer", "description": "Lane ID"]),
+            ]),
+            "required": .array(["board_id", "id"]),
+        ])
+    ),
+
+    // Card Baselines
+    Tool(
+        name: "kaiten_get_card_baselines",
+        description: "Get card baselines",
+        inputSchema: .object([
+            "type": "object",
+            "properties": .object([
+                "card_id": .object(["type": "integer", "description": "Card ID"]),
+            ]),
+            "required": .array(["card_id"]),
+        ])
+    ),
+
     Tool(
         name: "kaiten_set_token",
         description: "Store Kaiten API token and URL in user config. Token is saved securely with restricted file permissions (0600). Env vars always override config.",
@@ -682,6 +958,187 @@ await server.withMethodHandler(CallTool.self) { params in
                         expected: "one of: get, set_boards, set_spaces, add_board, remove_board, add_space, remove_space"
                     )
                 }
+
+            // Sprint
+            case "kaiten_get_sprint_summary":
+                let id = try requireInt(params, key: "id")
+                let excludeDeletedCards = optionalBool(params, key: "exclude_deleted_cards")
+                let summary = try await kaiten.getSprintSummary(id: id, excludeDeletedCards: excludeDeletedCards)
+                return toJSON(summary)
+
+            // Spaces CRUD
+            case "kaiten_create_space":
+                let title = try requireString(params, key: "title")
+                let externalId = optionalString(params, key: "external_id")
+                let sortOrder = optionalDouble(params, key: "sort_order")
+                let space = try await kaiten.createSpace(title: title, externalId: externalId, sortOrder: sortOrder)
+                return toJSON(space)
+
+            case "kaiten_get_space":
+                let id = try requireInt(params, key: "id")
+                let space = try await kaiten.getSpace(id: id)
+                return toJSON(space)
+
+            case "kaiten_update_space":
+                let id = try requireInt(params, key: "id")
+                let space = try await kaiten.updateSpace(
+                    id: id,
+                    title: optionalString(params, key: "title"),
+                    externalId: optionalString(params, key: "external_id"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    access: optionalString(params, key: "access"),
+                    parentEntityUid: optionalString(params, key: "parent_entity_uid")
+                )
+                return toJSON(space)
+
+            case "kaiten_delete_space":
+                let id = try requireInt(params, key: "id")
+                let deletedId = try await kaiten.deleteSpace(id: id)
+                return toJSON(["id": deletedId])
+
+            // Boards CRUD
+            case "kaiten_create_board":
+                let spaceId = try requireInt(params, key: "space_id")
+                let title = try requireString(params, key: "title")
+                let board = try await kaiten.createBoard(
+                    spaceId: spaceId,
+                    title: title,
+                    description: optionalString(params, key: "description"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    externalId: optionalString(params, key: "external_id")
+                )
+                return toJSON(board)
+
+            case "kaiten_update_board":
+                let spaceId = try requireInt(params, key: "space_id")
+                let id = try requireInt(params, key: "id")
+                let board = try await kaiten.updateBoard(
+                    spaceId: spaceId,
+                    id: id,
+                    title: optionalString(params, key: "title"),
+                    description: optionalString(params, key: "description"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    externalId: optionalString(params, key: "external_id")
+                )
+                return toJSON(board)
+
+            case "kaiten_delete_board":
+                let spaceId = try requireInt(params, key: "space_id")
+                let id = try requireInt(params, key: "id")
+                let deletedId = try await kaiten.deleteBoard(spaceId: spaceId, id: id)
+                return toJSON(["id": deletedId])
+
+            // Columns CRUD
+            case "kaiten_create_column":
+                let boardId = try requireInt(params, key: "board_id")
+                let title = try requireString(params, key: "title")
+                let column = try await kaiten.createColumn(
+                    boardId: boardId,
+                    title: title,
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    type: optionalInt(params, key: "type"),
+                    wipLimit: optionalInt(params, key: "wip_limit"),
+                    wipLimitType: optionalInt(params, key: "wip_limit_type"),
+                    colCount: optionalInt(params, key: "col_count")
+                )
+                return toJSON(column)
+
+            case "kaiten_update_column":
+                let boardId = try requireInt(params, key: "board_id")
+                let id = try requireInt(params, key: "id")
+                let column = try await kaiten.updateColumn(
+                    boardId: boardId,
+                    id: id,
+                    title: optionalString(params, key: "title"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    type: optionalInt(params, key: "type"),
+                    wipLimit: optionalInt(params, key: "wip_limit"),
+                    wipLimitType: optionalInt(params, key: "wip_limit_type"),
+                    colCount: optionalInt(params, key: "col_count")
+                )
+                return toJSON(column)
+
+            case "kaiten_delete_column":
+                let boardId = try requireInt(params, key: "board_id")
+                let id = try requireInt(params, key: "id")
+                let deletedId = try await kaiten.deleteColumn(boardId: boardId, id: id)
+                return toJSON(["id": deletedId])
+
+            // Subcolumns
+            case "kaiten_list_subcolumns":
+                let columnId = try requireInt(params, key: "column_id")
+                let subcolumns = try await kaiten.listSubcolumns(columnId: columnId)
+                return toJSON(subcolumns)
+
+            case "kaiten_create_subcolumn":
+                let columnId = try requireInt(params, key: "column_id")
+                let title = try requireString(params, key: "title")
+                let subcolumn = try await kaiten.createSubcolumn(
+                    columnId: columnId,
+                    title: title,
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    type: optionalInt(params, key: "type")
+                )
+                return toJSON(subcolumn)
+
+            case "kaiten_update_subcolumn":
+                let columnId = try requireInt(params, key: "column_id")
+                let id = try requireInt(params, key: "id")
+                let subcolumn = try await kaiten.updateSubcolumn(
+                    columnId: columnId,
+                    id: id,
+                    title: optionalString(params, key: "title"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    type: optionalInt(params, key: "type")
+                )
+                return toJSON(subcolumn)
+
+            case "kaiten_delete_subcolumn":
+                let columnId = try requireInt(params, key: "column_id")
+                let id = try requireInt(params, key: "id")
+                let deletedId = try await kaiten.deleteSubcolumn(columnId: columnId, id: id)
+                return toJSON(["id": deletedId])
+
+            // Lanes CRUD
+            case "kaiten_create_lane":
+                let boardId = try requireInt(params, key: "board_id")
+                let title = try requireString(params, key: "title")
+                let lane = try await kaiten.createLane(
+                    boardId: boardId,
+                    title: title,
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    wipLimit: optionalInt(params, key: "wip_limit"),
+                    wipLimitType: optionalInt(params, key: "wip_limit_type"),
+                    rowCount: optionalInt(params, key: "row_count")
+                )
+                return toJSON(lane)
+
+            case "kaiten_update_lane":
+                let boardId = try requireInt(params, key: "board_id")
+                let id = try requireInt(params, key: "id")
+                let lane = try await kaiten.updateLane(
+                    boardId: boardId,
+                    id: id,
+                    title: optionalString(params, key: "title"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
+                    wipLimit: optionalInt(params, key: "wip_limit"),
+                    wipLimitType: optionalInt(params, key: "wip_limit_type"),
+                    rowCount: optionalInt(params, key: "row_count"),
+                    condition: optionalInt(params, key: "condition")
+                )
+                return toJSON(lane)
+
+            case "kaiten_delete_lane":
+                let boardId = try requireInt(params, key: "board_id")
+                let id = try requireInt(params, key: "id")
+                let deletedId = try await kaiten.deleteLane(boardId: boardId, id: id)
+                return toJSON(["id": deletedId])
+
+            // Card Baselines
+            case "kaiten_get_card_baselines":
+                let cardId = try requireInt(params, key: "card_id")
+                let baselines = try await kaiten.getCardBaselines(cardId: cardId)
+                return toJSON(baselines)
 
             default:
                 throw ToolError.unknownTool(params.name)
