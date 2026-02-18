@@ -31,48 +31,34 @@ swift build -c release
 
 ## Usage
 
-### Configuration
+### 1. Get a Kaiten API Token
+
+Get your API token at `https://<your-company>.kaiten.ru/profile/api-key`.
+
+### 2. Configure Credentials
 
 Credentials are stored in `~/.config/kaiten/config.json` (shared with the [CLI](https://github.com/AllDmeat/kaiten-sdk)):
 
 ```json
 {
-  "url": "https://your-company.kaiten.ru/api/latest",
-  "token": "your-api-token"
+  "url": "https://<your-company>.kaiten.ru/api/latest",
+  "token": "<your-api-token>"
 }
 ```
 
-You can also configure credentials via the `kaiten_set_token` MCP tool after connecting the server.
+You can also set the token later via the `kaiten_set_token` MCP tool after connecting the server.
 
-Kaiten token: Profile Settings → API Tokens → Create.
+### 3. Connect to Your AI Tool
 
-### Connecting
+See the **[Integration Guide](docs/integration-guide.md)** for step-by-step instructions for:
 
-#### Claude Desktop
-
-`~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "kaiten": {
-      "command": "/path/to/kaiten-mcp"
-    }
-  }
-}
-```
-
-#### Cursor
-
-Settings → MCP Servers → Add:
-
-```json
-{
-  "kaiten": {
-    "command": "/path/to/kaiten-mcp"
-  }
-}
-```
+- Claude Desktop
+- Claude Code (CLI)
+- GitHub Copilot (VS Code)
+- GitHub Copilot CLI
+- Cursor
+- OpenAI Codex CLI
+- Windsurf
 
 ## API Reference
 
@@ -154,14 +140,7 @@ Settings → MCP Servers → Add:
 
 ## Configuration
 
-The config file at `~/.config/kaiten/config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/kaiten-sdk). You only need to configure it once.
-
-```json
-{
-  "url": "https://your-company.kaiten.ru/api/latest",
-  "token": "your-api-token"
-}
-```
+The config file at `~/.config/kaiten/config.json` is shared between MCP and [CLI](https://github.com/AllDmeat/kaiten-sdk). You only need to configure it once (see [Configure Credentials](#2-configure-credentials) above).
 
 User preferences are stored separately in `~/.config/kaiten/preferences.json`:
 
