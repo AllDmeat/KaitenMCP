@@ -970,7 +970,7 @@ await server.withMethodHandler(CallTool.self) { params in
             case "kaiten_create_space":
                 let title = try requireString(params, key: "title")
                 let externalId = optionalString(params, key: "external_id")
-                let sortOrder = optionalInt(params, key: "sort_order")
+                let sortOrder = optionalDouble(params, key: "sort_order")
                 let space = try await kaiten.createSpace(title: title, externalId: externalId, sortOrder: sortOrder)
                 return toJSON(space)
 
@@ -985,7 +985,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     id: id,
                     title: optionalString(params, key: "title"),
                     externalId: optionalString(params, key: "external_id"),
-                    sortOrder: optionalInt(params, key: "sort_order"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
                     access: optionalInt(params, key: "access"),
                     parentEntityUid: optionalString(params, key: "parent_entity_uid")
                 )
@@ -1004,7 +1004,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     spaceId: spaceId,
                     title: title,
                     description: optionalString(params, key: "description"),
-                    sortOrder: optionalInt(params, key: "sort_order"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
                     externalId: optionalString(params, key: "external_id")
                 )
                 return toJSON(board)
@@ -1017,7 +1017,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     id: id,
                     title: optionalString(params, key: "title"),
                     description: optionalString(params, key: "description"),
-                    sortOrder: optionalInt(params, key: "sort_order"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
                     externalId: optionalString(params, key: "external_id")
                 )
                 return toJSON(board)
@@ -1035,7 +1035,7 @@ await server.withMethodHandler(CallTool.self) { params in
                 let column = try await kaiten.createColumn(
                     boardId: boardId,
                     title: title,
-                    sortOrder: optionalInt(params, key: "sort_order"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
                     type: optionalInt(params, key: "type"),
                     wipLimit: optionalInt(params, key: "wip_limit"),
                     wipLimitType: optionalString(params, key: "wip_limit_type"),
@@ -1050,7 +1050,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     boardId: boardId,
                     id: id,
                     title: optionalString(params, key: "title"),
-                    sortOrder: optionalInt(params, key: "sort_order"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
                     type: optionalInt(params, key: "type"),
                     wipLimit: optionalInt(params, key: "wip_limit"),
                     wipLimitType: optionalString(params, key: "wip_limit_type"),
@@ -1076,7 +1076,7 @@ await server.withMethodHandler(CallTool.self) { params in
                 let subcolumn = try await kaiten.createSubcolumn(
                     columnId: columnId,
                     title: title,
-                    sortOrder: optionalInt(params, key: "sort_order"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
                     type: optionalInt(params, key: "type")
                 )
                 return toJSON(subcolumn)
@@ -1088,7 +1088,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     columnId: columnId,
                     id: id,
                     title: optionalString(params, key: "title"),
-                    sortOrder: optionalInt(params, key: "sort_order"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
                     type: optionalInt(params, key: "type")
                 )
                 return toJSON(subcolumn)
@@ -1106,7 +1106,7 @@ await server.withMethodHandler(CallTool.self) { params in
                 let lane = try await kaiten.createLane(
                     boardId: boardId,
                     title: title,
-                    sortOrder: optionalInt(params, key: "sort_order"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
                     wipLimit: optionalInt(params, key: "wip_limit"),
                     wipLimitType: optionalString(params, key: "wip_limit_type"),
                     rowCount: optionalInt(params, key: "row_count")
@@ -1120,7 +1120,7 @@ await server.withMethodHandler(CallTool.self) { params in
                     boardId: boardId,
                     id: id,
                     title: optionalString(params, key: "title"),
-                    sortOrder: optionalInt(params, key: "sort_order"),
+                    sortOrder: optionalDouble(params, key: "sort_order"),
                     wipLimit: optionalInt(params, key: "wip_limit"),
                     wipLimitType: optionalString(params, key: "wip_limit_type"),
                     rowCount: optionalInt(params, key: "row_count"),
