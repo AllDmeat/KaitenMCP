@@ -124,6 +124,8 @@ See the **[Integration Guide](docs/integration-guide.md)** for step-by-step inst
 |------|-------------|
 | `kaiten_list_custom_properties` | List custom property definitions |
 | `kaiten_get_custom_property` | Get a custom property by ID |
+| `kaiten_get_custom_property_select_values` | Get available select/multi-select values for a property |
+| `kaiten_update_card_properties` | Update custom property values on a card |
 
 ### Sprints
 
