@@ -1,6 +1,6 @@
 import Foundation
 
-/// Shared credentials stored at `~/.config/kaiten-mcp/config.json`.
+/// Shared credentials stored at `~/.config/kaiten/config.json`.
 /// This file is shared between CLI (KaitenSDK) and MCP.
 struct Config: Codable, Sendable {
     var url: String?

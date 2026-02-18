@@ -8,8 +8,8 @@ struct PreferencesResponse: Codable, Sendable {
     let mySpaces: [Preferences.SpaceRef]?
 }
 
-/// User-level preferences stored at `~/.config/kaiten-mcp/preferences.json`
-/// (Linux) or `~/Library/Application Support/kaiten-mcp/preferences.json` (macOS).
+/// User-level preferences stored at `~/.config/kaiten/preferences.json`
+/// (Linux) or `~/Library/Application Support/kaiten/preferences.json` (macOS).
 ///
 /// Credentials (url/token) live in `config.json` — shared with CLI.
 /// This file contains only MCP-specific user preferences.
@@ -41,11 +41,11 @@ struct Preferences: Codable, Sendable {
 
     // MARK: - File path
 
-    /// Config directory — always `~/.config/kaiten-mcp/` on all platforms.
+    /// Config directory — always `~/.config/kaiten/` on all platforms.
     /// Matches CLI (KaitenSDK) so credentials in config.json are shared.
     static var configDirectory: URL {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        return home.appendingPathComponent(".config/kaiten-mcp", isDirectory: true)
+        return home.appendingPathComponent(".config/kaiten", isDirectory: true)
     }
 
     static var filePath: URL {
