@@ -50,7 +50,7 @@ log("KaitenClient initialized successfully")
 
 let server = Server(
   name: "KaitenMCP",
-  version: "0.1.0",
+  version: "1.2.0",
   capabilities: .init(
     tools: .init(listChanged: false)
   )
@@ -1244,8 +1244,11 @@ await server.withMethodHandler(CallTool.self) { params in
           excludeColumnIds: optionalString(params, key: "exclude_column_ids"),
           excludeOwnerIds: optionalString(params, key: "exclude_owner_ids"),
           excludeCardIds: optionalString(params, key: "exclude_card_ids"),
-          condition: optionalInt(params, key: "condition"),
-          states: optionalString(params, key: "states"),
+          condition: optionalInt(params, key: "condition").flatMap { CardCondition(rawValue: $0) },
+          states: optionalString(params, key: "states").map {
+            $0.split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+              .compactMap { CardState(rawValue: $0) }
+          },
           archived: optionalBool(params, key: "archived") ?? false,
           asap: optionalBool(params, key: "asap"),
           overdue: optionalBool(params, key: "overdue"),
@@ -1287,9 +1290,13 @@ await server.withMethodHandler(CallTool.self) { params in
           typeId: optionalInt(params, key: "type_id"),
           serviceId: optionalInt(params, key: "service_id"),
           blocked: optionalBool(params, key: "blocked"),
-          condition: optionalInt(params, key: "condition"),
+          condition: optionalInt(params, key: "condition").flatMap {
+            CardCondition(rawValue: $0)
+          },
           externalId: optionalString(params, key: "external_id"),
-          textFormatTypeId: optionalInt(params, key: "text_format_type_id"),
+          textFormatTypeId: optionalInt(params, key: "text_format_type_id").flatMap {
+            TextFormatType(rawValue: $0)
+          },
           sdNewComment: optionalBool(params, key: "sd_new_comment"),
           ownerEmail: optionalString(params, key: "owner_email"),
           prevCardId: optionalInt(params, key: "prev_card_id"),
@@ -1322,7 +1329,6 @@ await server.withMethodHandler(CallTool.self) { params in
         let ownerId = optionalInt(params, key: "owner_id")
         let responsibleId = optionalInt(params, key: "responsible_id")
         let ownerEmail = optionalString(params, key: "owner_email")
-        let position = optionalInt(params, key: "position")
         let typeId = optionalInt(params, key: "type_id")
         let externalId = optionalString(params, key: "external_id")
         let card = try await kaiten.createCard(
@@ -1340,7 +1346,7 @@ await server.withMethodHandler(CallTool.self) { params in
           ownerId: ownerId,
           responsibleId: responsibleId,
           ownerEmail: ownerEmail,
-          position: position,
+          position: optionalInt(params, key: "position").flatMap { CardPosition(rawValue: $0) },
           typeId: typeId,
           externalId: externalId
         )
@@ -1373,7 +1379,9 @@ await server.withMethodHandler(CallTool.self) { params in
 
       case "kaiten_get_board_lanes":
         let boardId = try requireInt(params, key: "board_id")
-        let condition = optionalInt(params, key: "condition")
+        let condition = optionalInt(params, key: "condition").flatMap {
+          LaneCondition(rawValue: $0)
+        }
         let lanes = try await kaiten.getBoardLanes(boardId: boardId, condition: condition)
         return toJSON(lanes)
 
@@ -1404,8 +1412,8 @@ await server.withMethodHandler(CallTool.self) { params in
       case "kaiten_get_custom_property_select_values":
         let propertyId = try requireInt(params, key: "property_id")
         let query = optionalString(params, key: "query")
-        let offset = optionalInt(params, key: "offset")
-        let limit = optionalInt(params, key: "limit")
+        let offset = optionalInt(params, key: "offset") ?? 0
+        let limit = optionalInt(params, key: "limit") ?? 100
         let values = try await kaiten.listCustomPropertySelectValues(
           propertyId: propertyId,
           query: query,
@@ -1578,9 +1586,11 @@ await server.withMethodHandler(CallTool.self) { params in
           boardId: boardId,
           title: title,
           sortOrder: optionalDouble(params, key: "sort_order"),
-          type: optionalInt(params, key: "type"),
+          type: optionalInt(params, key: "type").flatMap { ColumnType(rawValue: $0) },
           wipLimit: optionalInt(params, key: "wip_limit"),
-          wipLimitType: optionalInt(params, key: "wip_limit_type"),
+          wipLimitType: optionalInt(params, key: "wip_limit_type").flatMap {
+            WipLimitType(rawValue: $0)
+          },
           colCount: optionalInt(params, key: "col_count")
         )
         return toJSON(column)
@@ -1593,9 +1603,11 @@ await server.withMethodHandler(CallTool.self) { params in
           id: id,
           title: optionalString(params, key: "title"),
           sortOrder: optionalDouble(params, key: "sort_order"),
-          type: optionalInt(params, key: "type"),
+          type: optionalInt(params, key: "type").flatMap { ColumnType(rawValue: $0) },
           wipLimit: optionalInt(params, key: "wip_limit"),
-          wipLimitType: optionalInt(params, key: "wip_limit_type"),
+          wipLimitType: optionalInt(params, key: "wip_limit_type").flatMap {
+            WipLimitType(rawValue: $0)
+          },
           colCount: optionalInt(params, key: "col_count")
         )
         return toJSON(column)
@@ -1619,7 +1631,7 @@ await server.withMethodHandler(CallTool.self) { params in
           columnId: columnId,
           title: title,
           sortOrder: optionalDouble(params, key: "sort_order"),
-          type: optionalInt(params, key: "type")
+          type: optionalInt(params, key: "type").flatMap { ColumnType(rawValue: $0) }
         )
         return toJSON(subcolumn)
 
@@ -1631,7 +1643,7 @@ await server.withMethodHandler(CallTool.self) { params in
           id: id,
           title: optionalString(params, key: "title"),
           sortOrder: optionalDouble(params, key: "sort_order"),
-          type: optionalInt(params, key: "type")
+          type: optionalInt(params, key: "type").flatMap { ColumnType(rawValue: $0) }
         )
         return toJSON(subcolumn)
 
@@ -1650,7 +1662,9 @@ await server.withMethodHandler(CallTool.self) { params in
           title: title,
           sortOrder: optionalDouble(params, key: "sort_order"),
           wipLimit: optionalInt(params, key: "wip_limit"),
-          wipLimitType: optionalInt(params, key: "wip_limit_type"),
+          wipLimitType: optionalInt(params, key: "wip_limit_type").flatMap {
+            WipLimitType(rawValue: $0)
+          },
           rowCount: optionalInt(params, key: "row_count")
         )
         return toJSON(lane)
@@ -1664,9 +1678,11 @@ await server.withMethodHandler(CallTool.self) { params in
           title: optionalString(params, key: "title"),
           sortOrder: optionalDouble(params, key: "sort_order"),
           wipLimit: optionalInt(params, key: "wip_limit"),
-          wipLimitType: optionalInt(params, key: "wip_limit_type"),
+          wipLimitType: optionalInt(params, key: "wip_limit_type").flatMap {
+            WipLimitType(rawValue: $0)
+          },
           rowCount: optionalInt(params, key: "row_count"),
-          condition: optionalInt(params, key: "condition")
+          condition: optionalInt(params, key: "condition").flatMap { LaneCondition(rawValue: $0) }
         )
         return toJSON(lane)
 
@@ -1787,8 +1803,11 @@ await server.withMethodHandler(CallTool.self) { params in
         let cardId = try requireInt(params, key: "card_id")
         let userId = try requireInt(params, key: "user_id")
         let typeValue = try requireInt(params, key: "type")
+        guard let roleType = CardMemberRoleType(rawValue: typeValue) else {
+          throw ToolError.invalidType(key: "type", expected: "1 (member) or 2 (responsible)")
+        }
         let role = try await kaiten.updateCardMemberRole(
-          cardId: cardId, userId: userId, type: typeValue)
+          cardId: cardId, userId: userId, type: roleType)
         return toJSON(role)
 
       case "kaiten_remove_card_member":
