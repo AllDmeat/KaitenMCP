@@ -889,6 +889,301 @@ let allTools: [Tool] = [
       "required": .array(["card_id", "checklist_id", "item_id"]),
     ])
   ),
+
+  // Delete Card
+  Tool(
+    name: "kaiten_delete_card",
+    description: "Delete a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"])
+      ]),
+      "required": .array(["card_id"]),
+    ])
+  ),
+
+  // Card Members
+  Tool(
+    name: "kaiten_add_card_member",
+    description: "Add a member to a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "user_id": .object(["type": "integer", "description": "User ID to add"]),
+      ]),
+      "required": .array(["card_id", "user_id"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_update_card_member_role",
+    description: "Update a card member's role (1 = member, 2 = responsible)",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "user_id": .object(["type": "integer", "description": "User ID"]),
+        "type": .object([
+          "type": "integer",
+          "description": "Role type: 1 = member, 2 = responsible",
+        ]),
+      ]),
+      "required": .array(["card_id", "user_id", "type"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_remove_card_member",
+    description: "Remove a member from a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "user_id": .object(["type": "integer", "description": "User ID to remove"]),
+      ]),
+      "required": .array(["card_id", "user_id"]),
+    ])
+  ),
+
+  // Comments
+  Tool(
+    name: "kaiten_update_comment",
+    description: "Update a comment on a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "comment_id": .object(["type": "integer", "description": "Comment ID"]),
+        "text": .object(["type": "string", "description": "New comment text (markdown)"]),
+      ]),
+      "required": .array(["card_id", "comment_id", "text"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_delete_comment",
+    description: "Delete a comment from a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "comment_id": .object(["type": "integer", "description": "Comment ID"]),
+      ]),
+      "required": .array(["card_id", "comment_id"]),
+    ])
+  ),
+
+  // Card Tags
+  Tool(
+    name: "kaiten_list_card_tags",
+    description: "List all tags on a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"])
+      ]),
+      "required": .array(["card_id"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_add_card_tag",
+    description: "Add a tag to a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "name": .object(["type": "string", "description": "Tag name"]),
+      ]),
+      "required": .array(["card_id", "name"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_remove_card_tag",
+    description: "Remove a tag from a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "tag_id": .object(["type": "integer", "description": "Tag ID"]),
+      ]),
+      "required": .array(["card_id", "tag_id"]),
+    ])
+  ),
+
+  // Card Children
+  Tool(
+    name: "kaiten_list_card_children",
+    description: "List children of a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"])
+      ]),
+      "required": .array(["card_id"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_add_card_child",
+    description: "Add a child card to a parent card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Parent card ID"]),
+        "child_card_id": .object(["type": "integer", "description": "Child card ID"]),
+      ]),
+      "required": .array(["card_id", "child_card_id"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_remove_card_child",
+    description: "Remove a child card from a parent card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Parent card ID"]),
+        "child_id": .object(["type": "integer", "description": "Child card ID"]),
+      ]),
+      "required": .array(["card_id", "child_id"]),
+    ])
+  ),
+
+  // Users
+  Tool(
+    name: "kaiten_list_users",
+    description: "List users in the company",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "type": .object(["type": "string", "description": "User type filter"]),
+        "query": .object(["type": "string", "description": "Search query"]),
+        "ids": .object(["type": "string", "description": "Comma-separated user IDs"]),
+        "limit": .object(["type": "integer", "description": "Max users to return (max 100)"]),
+        "offset": .object(["type": "integer", "description": "Pagination offset"]),
+        "include_inactive": .object([
+          "type": "boolean", "description": "Include inactive users",
+        ]),
+      ]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_get_current_user",
+    description: "Get the currently authenticated user",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([:]),
+    ])
+  ),
+
+  // Card Blockers
+  Tool(
+    name: "kaiten_list_card_blockers",
+    description: "List all blockers on a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"])
+      ]),
+      "required": .array(["card_id"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_create_card_blocker",
+    description: "Create a blocker on a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "reason": .object(["type": "string", "description": "Blocker reason"]),
+        "blocker_card_id": .object([
+          "type": "integer", "description": "ID of the blocking card",
+        ]),
+      ]),
+      "required": .array(["card_id"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_update_card_blocker",
+    description: "Update a card blocker",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "blocker_id": .object(["type": "integer", "description": "Blocker ID"]),
+        "reason": .object(["type": "string", "description": "Blocker reason"]),
+        "blocker_card_id": .object([
+          "type": "integer", "description": "ID of the blocking card",
+        ]),
+      ]),
+      "required": .array(["card_id", "blocker_id"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_delete_card_blocker",
+    description: "Delete a card blocker",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "blocker_id": .object(["type": "integer", "description": "Blocker ID"]),
+      ]),
+      "required": .array(["card_id", "blocker_id"]),
+    ])
+  ),
+
+  // Card Types
+  Tool(
+    name: "kaiten_list_card_types",
+    description: "List card types",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "limit": .object(["type": "integer", "description": "Max items to return"]),
+        "offset": .object(["type": "integer", "description": "Pagination offset"]),
+      ]),
+    ])
+  ),
+
+  // Sprints
+  Tool(
+    name: "kaiten_list_sprints",
+    description: "List sprints",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "active": .object(["type": "boolean", "description": "Filter by active status"]),
+        "limit": .object(["type": "integer", "description": "Max items to return"]),
+        "offset": .object(["type": "integer", "description": "Pagination offset"]),
+      ]),
+    ])
+  ),
+
+  // Card Location History
+  Tool(
+    name: "kaiten_get_card_location_history",
+    description: "Get card location history (column/lane movements)",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"])
+      ]),
+      "required": .array(["card_id"]),
+    ])
+  ),
+
+  // Update External Link
+  Tool(
+    name: "kaiten_update_external_link",
+    description: "Update an external link on a card",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "card_id": .object(["type": "integer", "description": "Card ID"]),
+        "link_id": .object(["type": "integer", "description": "External link ID"]),
+        "url": .object(["type": "string", "description": "New URL"]),
+        "title": .object(["type": "string", "description": "New title/description"]),
+      ]),
+      "required": .array(["card_id", "link_id"]),
+    ])
+  ),
 ]
 
 // MARK: - Handlers
@@ -1474,6 +1769,161 @@ await server.withMethodHandler(CallTool.self) { params in
         let deletedId = try await kaiten.removeChecklistItem(
           cardId: cardId, checklistId: checklistId, itemId: itemId)
         return toJSON(["id": deletedId])
+
+      // Delete Card
+      case "kaiten_delete_card":
+        let cardId = try requireInt(params, key: "card_id")
+        let card = try await kaiten.deleteCard(id: cardId)
+        return toJSON(card)
+
+      // Card Members
+      case "kaiten_add_card_member":
+        let cardId = try requireInt(params, key: "card_id")
+        let userId = try requireInt(params, key: "user_id")
+        let member = try await kaiten.addCardMember(cardId: cardId, userId: userId)
+        return toJSON(member)
+
+      case "kaiten_update_card_member_role":
+        let cardId = try requireInt(params, key: "card_id")
+        let userId = try requireInt(params, key: "user_id")
+        let typeValue = try requireInt(params, key: "type")
+        let role = try await kaiten.updateCardMemberRole(
+          cardId: cardId, userId: userId, type: typeValue)
+        return toJSON(role)
+
+      case "kaiten_remove_card_member":
+        let cardId = try requireInt(params, key: "card_id")
+        let userId = try requireInt(params, key: "user_id")
+        let deletedId = try await kaiten.removeCardMember(cardId: cardId, userId: userId)
+        return toJSON(["id": deletedId])
+
+      // Comments
+      case "kaiten_update_comment":
+        let cardId = try requireInt(params, key: "card_id")
+        let commentId = try requireInt(params, key: "comment_id")
+        let text = try requireString(params, key: "text")
+        let comment = try await kaiten.updateComment(
+          cardId: cardId, commentId: commentId, text: text)
+        return toJSON(comment)
+
+      case "kaiten_delete_comment":
+        let cardId = try requireInt(params, key: "card_id")
+        let commentId = try requireInt(params, key: "comment_id")
+        let deletedId = try await kaiten.deleteComment(cardId: cardId, commentId: commentId)
+        return toJSON(["id": deletedId])
+
+      // Card Tags
+      case "kaiten_list_card_tags":
+        let cardId = try requireInt(params, key: "card_id")
+        let tags = try await kaiten.listCardTags(cardId: cardId)
+        return toJSON(tags)
+
+      case "kaiten_add_card_tag":
+        let cardId = try requireInt(params, key: "card_id")
+        let name = try requireString(params, key: "name")
+        let tag = try await kaiten.addCardTag(cardId: cardId, name: name)
+        return toJSON(tag)
+
+      case "kaiten_remove_card_tag":
+        let cardId = try requireInt(params, key: "card_id")
+        let tagId = try requireInt(params, key: "tag_id")
+        let deletedId = try await kaiten.removeCardTag(cardId: cardId, tagId: tagId)
+        return toJSON(["id": deletedId])
+
+      // Card Children
+      case "kaiten_list_card_children":
+        let cardId = try requireInt(params, key: "card_id")
+        let children = try await kaiten.listCardChildren(cardId: cardId)
+        return toJSON(children)
+
+      case "kaiten_add_card_child":
+        let cardId = try requireInt(params, key: "card_id")
+        let childCardId = try requireInt(params, key: "child_card_id")
+        let child = try await kaiten.addCardChild(cardId: cardId, childCardId: childCardId)
+        return toJSON(child)
+
+      case "kaiten_remove_card_child":
+        let cardId = try requireInt(params, key: "card_id")
+        let childId = try requireInt(params, key: "child_id")
+        let deletedId = try await kaiten.removeCardChild(cardId: cardId, childId: childId)
+        return toJSON(["id": deletedId])
+
+      // Users
+      case "kaiten_list_users":
+        let type = optionalString(params, key: "type")
+        let query = optionalString(params, key: "query")
+        let ids = optionalString(params, key: "ids")
+        let limit = optionalInt(params, key: "limit")
+        let offset = optionalInt(params, key: "offset")
+        let includeInactive = optionalBool(params, key: "include_inactive")
+        let users = try await kaiten.listUsers(
+          type: type, query: query, ids: ids, limit: limit, offset: offset,
+          includeInactive: includeInactive)
+        return toJSON(users)
+
+      case "kaiten_get_current_user":
+        let user = try await kaiten.getCurrentUser()
+        return toJSON(user)
+
+      // Card Blockers
+      case "kaiten_list_card_blockers":
+        let cardId = try requireInt(params, key: "card_id")
+        let blockers = try await kaiten.listCardBlockers(cardId: cardId)
+        return toJSON(blockers)
+
+      case "kaiten_create_card_blocker":
+        let cardId = try requireInt(params, key: "card_id")
+        let reason = optionalString(params, key: "reason")
+        let blockerCardId = optionalInt(params, key: "blocker_card_id")
+        let blocker = try await kaiten.createCardBlocker(
+          cardId: cardId, reason: reason, blockerCardId: blockerCardId)
+        return toJSON(blocker)
+
+      case "kaiten_update_card_blocker":
+        let cardId = try requireInt(params, key: "card_id")
+        let blockerId = try requireInt(params, key: "blocker_id")
+        let reason = optionalString(params, key: "reason")
+        let blockerCardId = optionalInt(params, key: "blocker_card_id")
+        let blocker = try await kaiten.updateCardBlocker(
+          cardId: cardId, blockerId: blockerId, reason: reason, blockerCardId: blockerCardId)
+        return toJSON(blocker)
+
+      case "kaiten_delete_card_blocker":
+        let cardId = try requireInt(params, key: "card_id")
+        let blockerId = try requireInt(params, key: "blocker_id")
+        let blocker = try await kaiten.deleteCardBlocker(cardId: cardId, blockerId: blockerId)
+        return toJSON(blocker)
+
+      // Card Types
+      case "kaiten_list_card_types":
+        let limit = optionalInt(params, key: "limit")
+        let offset = optionalInt(params, key: "offset")
+        let types = try await kaiten.listCardTypes(limit: limit, offset: offset)
+        return toJSON(types)
+
+      // Sprints
+      case "kaiten_list_sprints":
+        let active = optionalBool(params, key: "active")
+        let limit = optionalInt(params, key: "limit")
+        let offset = optionalInt(params, key: "offset")
+        let sprints = try await kaiten.listSprints(active: active, limit: limit, offset: offset)
+        return toJSON(sprints)
+
+      // Card Location History
+      case "kaiten_get_card_location_history":
+        let cardId = try requireInt(params, key: "card_id")
+        let history = try await kaiten.getCardLocationHistory(cardId: cardId)
+        return toJSON(history)
+
+      // Update External Link
+      case "kaiten_update_external_link":
+        let cardId = try requireInt(params, key: "card_id")
+        let linkId = try requireInt(params, key: "link_id")
+        let url = optionalString(params, key: "url")
+        let title = optionalString(params, key: "title")
+        let link = try await kaiten.updateExternalLink(
+          cardId: cardId, linkId: linkId, url: url, description: title)
+        return toJSON(link)
 
       default:
         throw ToolError.unknownTool(params.name)
