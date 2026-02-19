@@ -68,7 +68,8 @@ An AI agent retrieves information about custom card properties — their definit
 
 - **FR-001**: The server MUST start as a stdio MCP server
 - **FR-002**: The server MUST read KAITEN_URL and KAITEN_TOKEN from environment variables
-- **FR-003**: The server MUST provide a tool for each public KaitenSDK method
+- **FR-003**: The server MUST provide a tool for each public KaitenSDK method. Every public method on `KaitenClient` MUST have a corresponding MCP tool — there MUST be a 1:1 mapping between SDK public API surface and MCP tools. When new methods are added to KaitenSDK, corresponding MCP tools MUST be added before the next release.
+- **FR-003a**: When upgrading the KaitenSDK dependency to a new version, the developer MUST diff the public API surface of `KaitenClient` (all `public func` declarations) between the old and new SDK versions. New methods MUST get corresponding MCP tools, removed methods MUST have their MCP tools deleted, and changed signatures MUST be reflected in tool definitions and handlers. This audit MUST happen as part of every SDK version bump PR.
 - **FR-004**: Each tool MUST return data in JSON format
 - **FR-005**: Each tool MUST return isError=true on SDK errors with an error description
 - **FR-006**: The server MUST crash at startup if KAITEN_URL or KAITEN_TOKEN are missing
