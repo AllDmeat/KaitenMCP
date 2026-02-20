@@ -57,7 +57,7 @@ An AI agent retrieves information about custom card properties — their definit
 
 ### Edge Cases
 
-- What if KAITEN_URL or KAITEN_TOKEN are not set? → The server should crash at startup with a clear error
+- What if url/token are not configured? → Server starts successfully; API tools fail at call time with a clear error that asks to run `kaiten_login`
 - What if the token is invalid / expired? → Tool returns isError=true with an unauthorized message
 - What if the Kaiten API is unavailable (timeout, 5xx)? → Tool returns isError=true, retry logic in SDK
 - What if a tool argument is invalid (negative id, missing required parameter)? → Tool returns isError=true with an error description
@@ -67,12 +67,14 @@ An AI agent retrieves information about custom card properties — their definit
 ### Functional Requirements
 
 - **FR-001**: The server MUST start as a stdio MCP server
-- **FR-002**: The server MUST read KAITEN_URL and KAITEN_TOKEN from environment variables
+- **FR-002**: The server MUST load credentials from shared config file `~/.config/kaiten/config.json` (`url`, `token`)
 - **FR-003**: The server MUST provide a tool for each public KaitenSDK method. Every public method on `KaitenClient` MUST have a corresponding MCP tool — there MUST be a 1:1 mapping between SDK public API surface and MCP tools. When new methods are added to KaitenSDK, corresponding MCP tools MUST be added before the next release.
 - **FR-003a**: When upgrading the KaitenSDK dependency to a new version, the developer MUST diff the public API surface of `KaitenClient` (all `public func` declarations) between the old and new SDK versions. New methods MUST get corresponding MCP tools, removed methods MUST have their MCP tools deleted, and changed signatures MUST be reflected in tool definitions and handlers. This audit MUST happen as part of every SDK version bump PR.
 - **FR-004**: Each tool MUST return data in JSON format
 - **FR-005**: Each tool MUST return isError=true on SDK errors with an error description
-- **FR-006**: The server MUST crash at startup if KAITEN_URL or KAITEN_TOKEN are missing
+- **FR-006**: The server MUST start even if `url` or `token` are missing in config
+- **FR-012**: The server MUST validate `url` and `token` lazily when an API-backed tool is called, and return `isError=true` with an actionable message if credentials are missing
+- **FR-013**: The server MUST provide MCP tool `kaiten_login` that accepts `url` and `token`, validates both values, and saves them to `~/.config/kaiten/config.json`
 - **FR-007**: The server MUST use KaitenSDK as a dependency, without duplicating business logic
 - **FR-008**: The server MUST build as an executable Swift package (Swift 6.0+, macOS + Linux)
 - **FR-009**: The server MUST have CI via GitHub Actions (build + lint on macOS and Linux)

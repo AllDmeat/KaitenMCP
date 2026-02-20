@@ -27,24 +27,12 @@ func exitWithError(_ message: String) -> Never {
 log("Starting KaitenMCP...")
 
 let config = Config.load()
-let preferences = Preferences.load()
 log(
   "Config loaded from \(Config.filePath.path): url=\(config.url != nil ? "set" : "NOT SET"), token=\(config.token != nil ? "set" : "NOT SET")"
 )
 log(
-  "Preferences loaded from \(Preferences.filePath.path): boards=\(preferences.boardIds?.description ?? "none"), spaces=\(preferences.spaceIds?.description ?? "none")"
+  "Preferences loaded from \(Preferences.filePath.path)"
 )
-
-guard let kaitenURL = config.url else {
-  exitWithError("Error: url not set. Edit \(Config.filePath.path)")
-}
-
-guard let kaitenToken = config.token else {
-  exitWithError("Error: token not set. Edit \(Config.filePath.path)")
-}
-
-let kaiten = try KaitenClient(baseURL: kaitenURL, token: kaitenToken)
-log("KaitenClient initialized successfully")
 
 // MARK: - MCP Server
 
@@ -465,6 +453,18 @@ let allTools: [Tool] = [
         ]),
       ]),
       "required": .array(["action"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_login",
+    description: "Save Kaiten credentials (url, token) to shared config",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "url": .object(["type": "string", "description": "Kaiten API URL"]),
+        "token": .object(["type": "string", "description": "Kaiten API token"]),
+      ]),
+      "required": .array(["url", "token"]),
     ])
   ),
   // Sprint
@@ -1195,6 +1195,94 @@ await server.withMethodHandler(ListTools.self) { _ in
 await server.withMethodHandler(CallTool.self) { params in
   do {
     let json: String = try await {
+      if params.name == "kaiten_get_preferences" {
+        let currentConfig = Config.load()
+        let currentPreferences = Preferences.load()
+        let response = PreferencesResponse(
+          url: currentConfig.url,
+          myBoards: currentPreferences.myBoards,
+          mySpaces: currentPreferences.mySpaces
+        )
+        return toJSON(response)
+      }
+
+      if params.name == "kaiten_configure" {
+        let action = try requireString(params, key: "action")
+        var prefs = Preferences.load()
+
+        switch action {
+        case "get":
+          return toJSON(prefs)
+
+        case "set_boards":
+          let ids = try requireIntArray(params, key: "ids")
+          prefs.myBoards = ids.map { Preferences.BoardRef(id: $0) }
+          try prefs.save()
+          return toJSON(prefs)
+
+        case "set_spaces":
+          let ids = try requireIntArray(params, key: "ids")
+          prefs.mySpaces = ids.map { Preferences.SpaceRef(id: $0) }
+          try prefs.save()
+          return toJSON(prefs)
+
+        case "add_board":
+          let id = try requireInt(params, key: "id")
+          let alias = optionalString(params, key: "alias")
+          var boards = prefs.myBoards ?? []
+          if !boards.contains(where: { $0.id == id }) {
+            boards.append(Preferences.BoardRef(id: id, alias: alias))
+          }
+          prefs.myBoards = boards
+          try prefs.save()
+          return toJSON(prefs)
+
+        case "remove_board":
+          let id = try requireInt(params, key: "id")
+          prefs.myBoards?.removeAll(where: { $0.id == id })
+          try prefs.save()
+          return toJSON(prefs)
+
+        case "add_space":
+          let id = try requireInt(params, key: "id")
+          let alias = optionalString(params, key: "alias")
+          var spaces = prefs.mySpaces ?? []
+          if !spaces.contains(where: { $0.id == id }) {
+            spaces.append(Preferences.SpaceRef(id: id, alias: alias))
+          }
+          prefs.mySpaces = spaces
+          try prefs.save()
+          return toJSON(prefs)
+
+        case "remove_space":
+          let id = try requireInt(params, key: "id")
+          prefs.mySpaces?.removeAll(where: { $0.id == id })
+          try prefs.save()
+          return toJSON(prefs)
+
+        default:
+          throw ToolError.invalidType(
+            key: "action",
+            expected:
+              "one of: get, set_boards, set_spaces, add_board, remove_board, add_space, remove_space"
+          )
+        }
+      }
+
+      if params.name == "kaiten_login" {
+        let rawURL = try requireString(params, key: "url")
+        let rawToken = try requireString(params, key: "token")
+        try validateLoginInput(url: rawURL, token: rawToken)
+
+        var currentConfig = Config.load()
+        currentConfig.url = rawURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        currentConfig.token = rawToken.trimmingCharacters(in: .whitespacesAndNewlines)
+        try currentConfig.save()
+        return toJSON(currentConfig)
+      }
+
+      let kaiten = try makeConfiguredKaitenClient()
+
       switch params.name {
       case "kaiten_list_cards":
         let boardId = optionalInt(params, key: "board_id")
@@ -1436,76 +1524,6 @@ await server.withMethodHandler(CallTool.self) { params in
           Components.Schemas.UpdateCardRequest.propertiesPayload.self, from: propsData)
         let card = try await kaiten.updateCard(id: cardId, properties: properties)
         return toJSON(card)
-
-      case "kaiten_get_preferences":
-        let response = PreferencesResponse(
-          url: config.url,
-          myBoards: preferences.myBoards,
-          mySpaces: preferences.mySpaces
-        )
-        return toJSON(response)
-
-      case "kaiten_configure":
-        let action = try requireString(params, key: "action")
-        var prefs = Preferences.load()
-
-        switch action {
-        case "get":
-          return toJSON(prefs)
-
-        case "set_boards":
-          let ids = try requireIntArray(params, key: "ids")
-          prefs.myBoards = ids.map { Preferences.BoardRef(id: $0) }
-          try prefs.save()
-          return toJSON(prefs)
-
-        case "set_spaces":
-          let ids = try requireIntArray(params, key: "ids")
-          prefs.mySpaces = ids.map { Preferences.SpaceRef(id: $0) }
-          try prefs.save()
-          return toJSON(prefs)
-
-        case "add_board":
-          let id = try requireInt(params, key: "id")
-          let alias = optionalString(params, key: "alias")
-          var boards = prefs.myBoards ?? []
-          if !boards.contains(where: { $0.id == id }) {
-            boards.append(Preferences.BoardRef(id: id, alias: alias))
-          }
-          prefs.myBoards = boards
-          try prefs.save()
-          return toJSON(prefs)
-
-        case "remove_board":
-          let id = try requireInt(params, key: "id")
-          prefs.myBoards?.removeAll(where: { $0.id == id })
-          try prefs.save()
-          return toJSON(prefs)
-
-        case "add_space":
-          let id = try requireInt(params, key: "id")
-          let alias = optionalString(params, key: "alias")
-          var spaces = prefs.mySpaces ?? []
-          if !spaces.contains(where: { $0.id == id }) {
-            spaces.append(Preferences.SpaceRef(id: id, alias: alias))
-          }
-          prefs.mySpaces = spaces
-          try prefs.save()
-          return toJSON(prefs)
-
-        case "remove_space":
-          let id = try requireInt(params, key: "id")
-          prefs.mySpaces?.removeAll(where: { $0.id == id })
-          try prefs.save()
-          return toJSON(prefs)
-
-        default:
-          throw ToolError.invalidType(
-            key: "action",
-            expected:
-              "one of: get, set_boards, set_spaces, add_board, remove_board, add_space, remove_space"
-          )
-        }
 
       // Sprint
       case "kaiten_get_sprint_summary":
@@ -1967,18 +1985,64 @@ await server.waitUntilCompleted()
 enum ToolError: Error, CustomStringConvertible {
   case missingArgument(String)
   case invalidType(key: String, expected: String)
+  case missingCredentials([String])
+  case invalidCredentials(String)
   case unknownTool(String)
 
   var description: String {
     switch self {
     case .missingArgument(let key):
-      "Missing required argument: \(key)"
+      return "Missing required argument: \(key)"
     case .invalidType(let key, let expected):
-      "Invalid type for '\(key)': expected \(expected)"
+      return "Invalid type for '\(key)': expected \(expected)"
+    case .missingCredentials(let keys):
+      let missing = keys.joined(separator: ", ")
+      return
+        "Missing credentials in \(Config.filePath.path): \(missing). Run kaiten_login with url and token."
+    case .invalidCredentials(let message):
+      return "Invalid credentials input: \(message)"
     case .unknownTool(let name):
-      "Unknown tool: \(name)"
+      return "Unknown tool: \(name)"
     }
   }
+}
+
+@Sendable func missingCredentialKeys(in config: Config) -> [String] {
+  var missing: [String] = []
+  if (config.url?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) {
+    missing.append("url")
+  }
+  if (config.token?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) {
+    missing.append("token")
+  }
+  return missing
+}
+
+@Sendable func validateLoginInput(url: String, token: String) throws {
+  let normalizedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
+  let normalizedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+
+  guard !normalizedURL.isEmpty else {
+    throw ToolError.invalidCredentials("url must not be empty")
+  }
+  guard !normalizedToken.isEmpty else {
+    throw ToolError.invalidCredentials("token must not be empty")
+  }
+  guard let parsed = URL(string: normalizedURL), parsed.scheme != nil, parsed.host != nil else {
+    throw ToolError.invalidCredentials("url must be an absolute URL")
+  }
+}
+
+@Sendable func makeConfiguredKaitenClient() throws -> KaitenClient {
+  let config = Config.load()
+  let missing = missingCredentialKeys(in: config)
+  guard missing.isEmpty else {
+    throw ToolError.missingCredentials(missing)
+  }
+  return try KaitenClient(
+    baseURL: config.url!.trimmingCharacters(in: .whitespacesAndNewlines),
+    token: config.token!.trimmingCharacters(in: .whitespacesAndNewlines)
+  )
 }
 
 @Sendable func requireInt(_ params: CallTool.Parameters, key: String) throws -> Int {
