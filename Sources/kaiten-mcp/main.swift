@@ -179,6 +179,16 @@ enum ToolError: Error, CustomStringConvertible {
   return str
 }
 
+@Sendable func normalizeEscapedNewlines(_ value: String) -> String {
+  value
+    .replacingOccurrences(of: "\\r\\n", with: "\n")
+    .replacingOccurrences(of: "\\n", with: "\n")
+}
+
+@Sendable func normalizeOptionalEscapedNewlines(_ value: String?) -> String? {
+  value.map(normalizeEscapedNewlines)
+}
+
 @Sendable func optionalInt(_ params: CallTool.Parameters, key: String) -> Int? {
   guard let value = params.arguments?[key] else { return nil }
   return value.intValue ?? value.doubleValue.map(Int.init)

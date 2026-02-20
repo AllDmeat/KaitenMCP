@@ -194,7 +194,7 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
         let card = try await kaiten.updateCard(
           id: id,
           title: optionalString(params, key: "title"),
-          description: optionalString(params, key: "description"),
+          description: normalizeOptionalEscapedNewlines(optionalString(params, key: "description")),
           asap: optionalBool(params, key: "asap"),
           dueDate: optionalString(params, key: "due_date"),
           dueDateTimePresent: optionalBool(params, key: "due_date_time_present"),
@@ -237,7 +237,7 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
         let boardId = try requireInt(params, key: "board_id")
         let columnId = optionalInt(params, key: "column_id")
         let laneId = optionalInt(params, key: "lane_id")
-        let description = optionalString(params, key: "description")
+        let description = normalizeOptionalEscapedNewlines(optionalString(params, key: "description"))
         let asap = optionalBool(params, key: "asap")
         let dueDate = optionalString(params, key: "due_date")
         let dueDateTimePresent = optionalBool(params, key: "due_date_time_present")
@@ -272,7 +272,7 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
 
       case "kaiten_create_comment":
         let cardId = try requireInt(params, key: "card_id")
-        let text = try requireString(params, key: "text")
+        let text = normalizeEscapedNewlines(try requireString(params, key: "text"))
         let comment = try await kaiten.createComment(cardId: cardId, text: text)
         return toJSON(comment)
 
@@ -396,7 +396,7 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
         let board = try await kaiten.createBoard(
           spaceId: spaceId,
           title: title,
-          description: optionalString(params, key: "description"),
+          description: normalizeOptionalEscapedNewlines(optionalString(params, key: "description")),
           sortOrder: optionalDouble(params, key: "sort_order"),
           externalId: optionalString(params, key: "external_id")
         )
@@ -409,7 +409,7 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
           spaceId: spaceId,
           id: id,
           title: optionalString(params, key: "title"),
-          description: optionalString(params, key: "description"),
+          description: normalizeOptionalEscapedNewlines(optionalString(params, key: "description")),
           sortOrder: optionalDouble(params, key: "sort_order"),
           externalId: optionalString(params, key: "external_id")
         )
@@ -583,7 +583,7 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
       case "kaiten_create_checklist_item":
         let cardId = try requireInt(params, key: "card_id")
         let checklistId = try requireInt(params, key: "checklist_id")
-        let text = try requireString(params, key: "text")
+        let text = normalizeEscapedNewlines(try requireString(params, key: "text"))
         let sortOrder = optionalDouble(params, key: "sort_order")
         let checked = optionalBool(params, key: "checked")
         let dueDate = optionalString(params, key: "due_date")
@@ -597,7 +597,7 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
         let cardId = try requireInt(params, key: "card_id")
         let checklistId = try requireInt(params, key: "checklist_id")
         let itemId = try requireInt(params, key: "item_id")
-        let text = optionalString(params, key: "text")
+        let text = normalizeOptionalEscapedNewlines(optionalString(params, key: "text"))
         let sortOrder = optionalDouble(params, key: "sort_order")
         let moveToChecklistId = optionalInt(params, key: "move_to_checklist_id")
         let checked = optionalBool(params, key: "checked")
@@ -651,7 +651,7 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
       case "kaiten_update_comment":
         let cardId = try requireInt(params, key: "card_id")
         let commentId = try requireInt(params, key: "comment_id")
-        let text = try requireString(params, key: "text")
+        let text = normalizeEscapedNewlines(try requireString(params, key: "text"))
         let comment = try await kaiten.updateComment(
           cardId: cardId, commentId: commentId, text: text)
         return toJSON(comment)
