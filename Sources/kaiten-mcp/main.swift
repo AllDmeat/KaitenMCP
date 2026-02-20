@@ -51,7 +51,8 @@ let allTools: [Tool] = [
   // Cards
   Tool(
     name: "kaiten_list_cards",
-    description: "List cards (paginated, max 100 per page). Supports 40+ filter parameters.",
+    description:
+      "List cards (paginated, max 100 per page). Defaults to active (non-archived) cards; set archived=true to include archived cards. Supports 40+ filter parameters.",
     inputSchema: .object([
       "type": "object",
       "properties": .object([
@@ -128,6 +129,7 @@ let allTools: [Tool] = [
         "archived": .object([
           "type": "boolean",
           "description": "Filter by archived status (default: false — only non-archived cards)",
+          "default": .bool(false),
         ]),
         "asap": .object(["type": "boolean", "description": "Filter ASAP cards"]),
         "overdue": .object(["type": "boolean", "description": "Filter overdue cards"]),
