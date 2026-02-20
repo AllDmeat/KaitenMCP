@@ -50,6 +50,7 @@ Or set credentials through MCP after connecting:
 
 - Call `kaiten_login` with `url` and `token`.
 - The server starts even without credentials; API tools validate config lazily and return an error telling you to run `kaiten_login` when credentials are missing.
+- Call `kaiten_read_logs` to get MCP log file path and contents (optionally `tail_lines`).
 
 ### 3. Connect to Your AI Tool
 
@@ -145,6 +146,7 @@ See the **[Integration Guide](docs/integration-guide.md)** for step-by-step inst
 | `kaiten_configure` | Manage preferences (boards/spaces) |
 | `kaiten_get_preferences` | Get current preferences |
 | `kaiten_login` | Save shared API credentials (`url`, `token`) |
+| `kaiten_read_logs` | Read MCP log file path and text content |
 
 ## Configuration
 

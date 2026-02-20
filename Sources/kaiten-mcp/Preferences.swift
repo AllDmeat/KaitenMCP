@@ -8,6 +8,12 @@ struct PreferencesResponse: Codable, Sendable {
   let mySpaces: [Preferences.SpaceRef]?
 }
 
+/// Response for `kaiten_read_logs`.
+struct LogReadResponse: Codable, Sendable {
+  let path: String
+  let content: String
+}
+
 /// User-level preferences stored at `~/.config/kaiten/preferences.json`
 /// (Linux) or `~/Library/Application Support/kaiten/preferences.json` (macOS).
 ///

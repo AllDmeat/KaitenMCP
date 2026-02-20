@@ -4,10 +4,11 @@ import MCP
 
 // MARK: - Logging
 
+let logFilePath = NSTemporaryDirectory() + "kaiten-mcp.log"
+
 let logFile: FileHandle? = {
-  let path = NSTemporaryDirectory() + "kaiten-mcp.log"
-  FileManager.default.createFile(atPath: path, contents: nil)
-  return FileHandle(forWritingAtPath: path)
+  FileManager.default.createFile(atPath: logFilePath, contents: nil)
+  return FileHandle(forWritingAtPath: logFilePath)
 }()
 
 func log(_ message: String) {
@@ -465,6 +466,19 @@ let allTools: [Tool] = [
         "token": .object(["type": "string", "description": "Kaiten API token"]),
       ]),
       "required": .array(["url", "token"]),
+    ])
+  ),
+  Tool(
+    name: "kaiten_read_logs",
+    description: "Read MCP log file text for troubleshooting",
+    inputSchema: .object([
+      "type": "object",
+      "properties": .object([
+        "tail_lines": .object([
+          "type": "integer",
+          "description": "Optional: return only last N lines",
+        ])
+      ]),
     ])
   ),
   // Sprint
@@ -1281,6 +1295,18 @@ await server.withMethodHandler(CallTool.self) { params in
         return toJSON(currentConfig)
       }
 
+      if params.name == "kaiten_read_logs" {
+        let tailLines = optionalInt(params, key: "tail_lines")
+        if let tailLines, tailLines <= 0 {
+          throw ToolError.invalidType(key: "tail_lines", expected: "positive integer")
+        }
+        let response = LogReadResponse(
+          path: logFilePath,
+          content: try readLogContent(path: logFilePath, tailLines: tailLines)
+        )
+        return toJSON(response)
+      }
+
       let kaiten = try makeConfiguredKaitenClient()
 
       switch params.name {
@@ -2043,6 +2069,20 @@ enum ToolError: Error, CustomStringConvertible {
     baseURL: config.url!.trimmingCharacters(in: .whitespacesAndNewlines),
     token: config.token!.trimmingCharacters(in: .whitespacesAndNewlines)
   )
+}
+
+@Sendable func readLogContent(path: String, tailLines: Int?) throws -> String {
+  guard FileManager.default.fileExists(atPath: path) else {
+    return ""
+  }
+  let content = try String(contentsOfFile: path, encoding: .utf8)
+  guard let tailLines else {
+    return content
+  }
+  return content
+    .split(separator: "\n", omittingEmptySubsequences: false)
+    .suffix(tailLines)
+    .joined(separator: "\n")
 }
 
 @Sendable func requireInt(_ params: CallTool.Parameters, key: String) throws -> Int {
