@@ -29,4 +29,13 @@ final class LazyConfigTests: XCTestCase {
         let content = try readLogContent(path: path, tailLines: nil)
         XCTAssertEqual(content, "")
     }
+
+    func testFormatArgumentKeysReturnsSortedKeyList() {
+        let formatted = formatArgumentKeys(["token", "board_id", "id"])
+        XCTAssertEqual(formatted, "board_id,id,token")
+    }
+
+    func testFormatArgumentKeysForEmptyArrayReturnsNone() {
+        XCTAssertEqual(formatArgumentKeys([]), "none")
+    }
 }

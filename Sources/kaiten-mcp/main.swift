@@ -1207,6 +1207,9 @@ await server.withMethodHandler(ListTools.self) { _ in
 }
 
 await server.withMethodHandler(CallTool.self) { params in
+  let startedAt = Date()
+  let argumentKeys = formatArgumentKeys(params.arguments.map { Array($0.keys) } ?? [])
+  log("Tool call started: \(params.name) keys=[\(argumentKeys)]")
   do {
     let json: String = try await {
       if params.name == "kaiten_get_preferences" {
@@ -1292,6 +1295,7 @@ await server.withMethodHandler(CallTool.self) { params in
         currentConfig.url = rawURL.trimmingCharacters(in: .whitespacesAndNewlines)
         currentConfig.token = rawToken.trimmingCharacters(in: .whitespacesAndNewlines)
         try currentConfig.save()
+        log("kaiten_login: credentials saved to \(Config.filePath.path)")
         return toJSON(currentConfig)
       }
 
@@ -1303,6 +1307,9 @@ await server.withMethodHandler(CallTool.self) { params in
         let response = LogReadResponse(
           path: logFilePath,
           content: try readLogContent(path: logFilePath, tailLines: tailLines)
+        )
+        log(
+          "kaiten_read_logs: returned log content from \(logFilePath), tail_lines=\(tailLines?.description ?? "all")"
         )
         return toJSON(response)
       }
@@ -1992,10 +1999,17 @@ await server.withMethodHandler(CallTool.self) { params in
         throw ToolError.unknownTool(params.name)
       }
     }()
+    log("Tool call succeeded: \(params.name) in \(elapsedMilliseconds(since: startedAt))ms")
     return .init(content: [.text(json)], isError: false)
   } catch let error as ToolError {
+    log(
+      "Tool call failed: \(params.name) in \(elapsedMilliseconds(since: startedAt))ms, error=\(error.description)"
+    )
     return .init(content: [.text(error.description)], isError: true)
   } catch {
+    log(
+      "Tool call failed: \(params.name) in \(elapsedMilliseconds(since: startedAt))ms, unexpected=\(error)"
+    )
     return .init(content: [.text("Error: \(error)")], isError: true)
   }
 }
@@ -2063,6 +2077,7 @@ enum ToolError: Error, CustomStringConvertible {
   let config = Config.load()
   let missing = missingCredentialKeys(in: config)
   guard missing.isEmpty else {
+    log("Credentials missing in config: \(missing.joined(separator: ","))")
     throw ToolError.missingCredentials(missing)
   }
   return try KaitenClient(
@@ -2073,6 +2088,7 @@ enum ToolError: Error, CustomStringConvertible {
 
 @Sendable func readLogContent(path: String, tailLines: Int?) throws -> String {
   guard FileManager.default.fileExists(atPath: path) else {
+    log("Log file not found at \(path), returning empty log content")
     return ""
   }
   let content = try String(contentsOfFile: path, encoding: .utf8)
@@ -2083,6 +2099,15 @@ enum ToolError: Error, CustomStringConvertible {
     .split(separator: "\n", omittingEmptySubsequences: false)
     .suffix(tailLines)
     .joined(separator: "\n")
+}
+
+@Sendable func formatArgumentKeys(_ keys: [String]) -> String {
+  guard !keys.isEmpty else { return "none" }
+  return keys.sorted().joined(separator: ",")
+}
+
+@Sendable func elapsedMilliseconds(since start: Date) -> Int {
+  Int(Date().timeIntervalSince(start) * 1000)
 }
 
 @Sendable func requireInt(_ params: CallTool.Parameters, key: String) throws -> Int {

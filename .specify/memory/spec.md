@@ -62,6 +62,7 @@ An AI agent retrieves information about custom card properties — their definit
 - What if the Kaiten API is unavailable (timeout, 5xx)? → Tool returns isError=true, retry logic in SDK
 - What if a tool argument is invalid (negative id, missing required parameter)? → Tool returns isError=true with an error description
 - What if the log file does not exist yet? → The log tool returns an empty content string with the resolved log file path
+- What if a tool fails unexpectedly? → Server logs tool name, duration, and error details to MCP log file (without sensitive argument values)
 
 ## Requirements
 
@@ -77,6 +78,7 @@ An AI agent retrieves information about custom card properties — their definit
 - **FR-012**: The server MUST validate `url` and `token` lazily when an API-backed tool is called, and return `isError=true` with an actionable message if credentials are missing
 - **FR-013**: The server MUST provide MCP tool `kaiten_login` that accepts `url` and `token`, validates both values, and saves them to `~/.config/kaiten/config.json`
 - **FR-014**: The server MUST provide MCP tool `kaiten_read_logs` that returns MCP log file path and text content for troubleshooting, with optional tail limiting
+- **FR-015**: The server MUST log MCP tool lifecycle events (start, success, failure) with tool name, duration, and safe argument metadata (keys only, never token values)
 - **FR-007**: The server MUST use KaitenSDK as a dependency, without duplicating business logic
 - **FR-008**: The server MUST build as an executable Swift package (Swift 6.0+, macOS + Linux)
 - **FR-009**: The server MUST have CI via GitHub Actions (build + lint on macOS and Linux)
