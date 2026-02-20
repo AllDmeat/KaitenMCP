@@ -103,7 +103,7 @@ After adding, open the Command Palette → **MCP: List Servers** → start the s
 
 ## GitHub Copilot CLI
 
-> User-level only — Copilot CLI does not auto-detect project-level MCP configs ([tracking issue](https://github.com/github/copilot-cli/issues/1291)). It does pick up `.vscode/mcp.json` if present.
+> User-level only — Copilot CLI does not auto-detect project-level MCP configs ([tracking issue](https://github.com/github/copilot-cli/issues/1291)).
 
 Create or edit `~/.copilot/mcp-config.json`:
 
