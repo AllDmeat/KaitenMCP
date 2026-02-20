@@ -53,16 +53,4 @@ let lanesTools: [Tool] = [
         "required": .array(["board_id", "id"]),
       ])
     ),
-  Tool(
-      name: "kaiten_delete_lane",
-      description: "Delete a lane from a board",
-      inputSchema: .object([
-        "type": "object",
-        "properties": .object([
-          "board_id": .object(["type": "integer", "description": "Board ID"]),
-          "id": .object(["type": "integer", "description": "Lane ID"]),
-        ]),
-        "required": .array(["board_id", "id"]),
-      ])
-    )
 ]

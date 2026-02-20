@@ -60,16 +60,4 @@ let boardsTools: [Tool] = [
         "required": .array(["space_id", "id"]),
       ])
     ),
-  Tool(
-      name: "kaiten_delete_board",
-      description: "Delete a board",
-      inputSchema: .object([
-        "type": "object",
-        "properties": .object([
-          "space_id": .object(["type": "integer", "description": "Space ID"]),
-          "id": .object(["type": "integer", "description": "Board ID"]),
-        ]),
-        "required": .array(["space_id", "id"]),
-      ])
-    )
 ]

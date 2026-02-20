@@ -389,11 +389,6 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
         )
         return toJSON(space)
 
-      case "kaiten_delete_space":
-        let id = try requireInt(params, key: "id")
-        let deletedId = try await kaiten.deleteSpace(id: id)
-        return toJSON(["id": deletedId])
-
       // Boards CRUD
       case "kaiten_create_board":
         let spaceId = try requireInt(params, key: "space_id")
@@ -419,12 +414,6 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
           externalId: optionalString(params, key: "external_id")
         )
         return toJSON(board)
-
-      case "kaiten_delete_board":
-        let spaceId = try requireInt(params, key: "space_id")
-        let id = try requireInt(params, key: "id")
-        let deletedId = try await kaiten.deleteBoard(spaceId: spaceId, id: id)
-        return toJSON(["id": deletedId])
 
       // Columns CRUD
       case "kaiten_create_column":
@@ -533,12 +522,6 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
           condition: optionalInt(params, key: "condition").flatMap { LaneCondition(rawValue: $0) }
         )
         return toJSON(lane)
-
-      case "kaiten_delete_lane":
-        let boardId = try requireInt(params, key: "board_id")
-        let id = try requireInt(params, key: "id")
-        let deletedId = try await kaiten.deleteLane(boardId: boardId, id: id)
-        return toJSON(["id": deletedId])
 
       // Card Baselines
       case "kaiten_get_card_baselines":

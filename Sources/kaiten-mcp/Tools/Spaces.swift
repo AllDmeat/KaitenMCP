@@ -49,15 +49,4 @@ let spacesTools: [Tool] = [
         "required": .array(["id"]),
       ])
     ),
-  Tool(
-      name: "kaiten_delete_space",
-      description: "Delete a space by ID",
-      inputSchema: .object([
-        "type": "object",
-        "properties": .object([
-          "id": .object(["type": "integer", "description": "Space ID"])
-        ]),
-        "required": .array(["id"]),
-      ])
-    )
 ]

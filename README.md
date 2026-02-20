@@ -90,7 +90,6 @@ See the **[Integration Guide](docs/integration-guide.md)** for step-by-step inst
 | `kaiten_create_space` | Create a space |
 | `kaiten_get_space` | Get a space by ID |
 | `kaiten_update_space` | Update a space |
-| `kaiten_delete_space` | Delete a space |
 
 ### Boards
 
@@ -100,7 +99,6 @@ See the **[Integration Guide](docs/integration-guide.md)** for step-by-step inst
 | `kaiten_get_board` | Get a board by ID |
 | `kaiten_create_board` | Create a board |
 | `kaiten_update_board` | Update a board |
-| `kaiten_delete_board` | Delete a board |
 
 ### Columns
 
@@ -122,7 +120,6 @@ See the **[Integration Guide](docs/integration-guide.md)** for step-by-step inst
 | `kaiten_get_board_lanes` | Get lanes of a board |
 | `kaiten_create_lane` | Create a lane |
 | `kaiten_update_lane` | Update a lane |
-| `kaiten_delete_lane` | Delete a lane |
 
 ### Custom Properties
 
