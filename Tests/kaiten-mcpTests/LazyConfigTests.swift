@@ -38,4 +38,23 @@ final class LazyConfigTests: XCTestCase {
     func testFormatArgumentKeysForEmptyArrayReturnsNone() {
         XCTAssertEqual(formatArgumentKeys([]), "none")
     }
+
+    func testNormalizeEscapedNewlinesConvertsEscapedLineBreakSequences() {
+        let raw = "First line\\n\\nSecond line\\r\\nThird line"
+        XCTAssertEqual(
+            normalizeEscapedNewlines(raw),
+            "First line\n\nSecond line\nThird line"
+        )
+    }
+
+    func testNormalizeOptionalEscapedNewlinesReturnsNilForNilInput() {
+        XCTAssertNil(normalizeOptionalEscapedNewlines(nil))
+    }
+
+    func testNormalizeOptionalEscapedNewlinesConvertsValueWhenPresent() {
+        XCTAssertEqual(
+            normalizeOptionalEscapedNewlines("Description\\nwith break"),
+            "Description\nwith break"
+        )
+    }
 }
