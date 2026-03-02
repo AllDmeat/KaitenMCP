@@ -218,7 +218,9 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
           sdNewComment: optionalBool(params, key: "sd_new_comment"),
           ownerEmail: optionalString(params, key: "owner_email"),
           prevCardId: optionalInt(params, key: "prev_card_id"),
-          estimateWorkload: optionalDouble(params, key: "estimate_workload")
+          estimateWorkload: optionalDouble(params, key: "estimate_workload"),
+          plannedStart: optionalString(params, key: "planned_start"),
+          plannedEnd: optionalString(params, key: "planned_end")
         )
         return toJSON(card)
 
