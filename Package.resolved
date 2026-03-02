@@ -15,7 +15,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AllDmeat/KaitenSDK.git",
       "state" : {
-        "revision" : "01013260ec18858140ec0f1fb6ef5c73e9bb6619",
+        "revision" : "32ea2c9cc6c1e084f9c0b3dd65f42eb964f66111",
         "version" : "1.4.0"
       }
     },

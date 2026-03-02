@@ -178,6 +178,14 @@ let cardsTools: [Tool] = [
             "type": "integer", "description": "Previous card ID for repositioning",
           ]),
           "estimate_workload": .object(["type": "number", "description": "Estimated workload"]),
+          "planned_start": .object([
+            "type": "string",
+            "description": "Planned start date (ISO 8601). Pass null to leave unchanged.",
+          ]),
+          "planned_end": .object([
+            "type": "string",
+            "description": "Planned end date (ISO 8601). Pass null to leave unchanged.",
+          ]),
         ]),
         "required": .array(["id"]),
       ])
