@@ -12,7 +12,7 @@ Built on top of [kaiten-sdk](https://github.com/AllDmeat/kaiten-sdk).
 
 ### mise (recommended)
 
-[mise](https://mise.jdx.dev) — a tool version manager. It will install the required version automatically:
+[mise](https://mise.jdx.dev/getting-started.html) — a tool version manager. It will install the required version automatically:
 
 ```bash
 mise use github:alldmeat/kaiten-mcp
