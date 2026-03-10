@@ -191,37 +191,36 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
 
       case "kaiten_update_card":
         let id = try requireInt(params, key: "id")
-        let card = try await kaiten.updateCard(
-          id: id,
-          title: optionalString(params, key: "title"),
-          description: normalizeOptionalEscapedNewlines(optionalString(params, key: "description")),
-          asap: optionalBool(params, key: "asap"),
-          dueDate: optionalString(params, key: "due_date"),
-          dueDateTimePresent: optionalBool(params, key: "due_date_time_present"),
-          sortOrder: optionalDouble(params, key: "sort_order"),
-          expiresLater: optionalBool(params, key: "expires_later"),
-          sizeText: optionalString(params, key: "size_text"),
-          boardId: optionalInt(params, key: "board_id"),
-          columnId: optionalInt(params, key: "column_id"),
-          laneId: optionalInt(params, key: "lane_id"),
-          ownerId: optionalInt(params, key: "owner_id"),
-          typeId: optionalInt(params, key: "type_id"),
-          serviceId: optionalInt(params, key: "service_id"),
-          blocked: optionalBool(params, key: "blocked"),
-          condition: optionalInt(params, key: "condition").flatMap {
-            CardCondition(rawValue: $0)
-          },
-          externalId: optionalString(params, key: "external_id"),
-          textFormatTypeId: optionalInt(params, key: "text_format_type_id").flatMap {
-            TextFormatType(rawValue: $0)
-          },
-          sdNewComment: optionalBool(params, key: "sd_new_comment"),
-          ownerEmail: optionalString(params, key: "owner_email"),
-          prevCardId: optionalInt(params, key: "prev_card_id"),
-          estimateWorkload: optionalDouble(params, key: "estimate_workload"),
-          plannedStart: optionalString(params, key: "planned_start"),
-          plannedEnd: optionalString(params, key: "planned_end")
-        )
+        var options = CardUpdateOptions()
+        options.title = optionalString(params, key: "title")
+        options.description = normalizeOptionalEscapedNewlines(optionalString(params, key: "description"))
+        options.asap = optionalBool(params, key: "asap")
+        options.dueDate = optionalString(params, key: "due_date")
+        options.dueDateTimePresent = optionalBool(params, key: "due_date_time_present")
+        options.sortOrder = optionalDouble(params, key: "sort_order")
+        options.expiresLater = optionalBool(params, key: "expires_later")
+        options.sizeText = optionalString(params, key: "size_text")
+        options.boardId = optionalInt(params, key: "board_id")
+        options.columnId = optionalInt(params, key: "column_id")
+        options.laneId = optionalInt(params, key: "lane_id")
+        options.ownerId = optionalInt(params, key: "owner_id")
+        options.typeId = optionalInt(params, key: "type_id")
+        options.serviceId = optionalInt(params, key: "service_id")
+        options.blocked = optionalBool(params, key: "blocked")
+        options.condition = optionalInt(params, key: "condition").flatMap {
+          CardCondition(rawValue: $0)
+        }
+        options.externalId = optionalString(params, key: "external_id")
+        options.textFormatTypeId = optionalInt(params, key: "text_format_type_id").flatMap {
+          TextFormatType(rawValue: $0)
+        }
+        options.sdNewComment = optionalBool(params, key: "sd_new_comment")
+        options.ownerEmail = optionalString(params, key: "owner_email")
+        options.prevCardId = optionalInt(params, key: "prev_card_id")
+        options.estimateWorkload = optionalDouble(params, key: "estimate_workload")
+        options.plannedStart = optionalString(params, key: "planned_start")
+        options.plannedEnd = optionalString(params, key: "planned_end")
+        let card = try await kaiten.updateCard(id: id, options)
         return toJSON(card)
 
       case "kaiten_get_card_members":
@@ -237,39 +236,23 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
       case "kaiten_create_card":
         let title = try requireString(params, key: "title")
         let boardId = try requireInt(params, key: "board_id")
-        let columnId = optionalInt(params, key: "column_id")
-        let laneId = optionalInt(params, key: "lane_id")
-        let description = normalizeOptionalEscapedNewlines(optionalString(params, key: "description"))
-        let asap = optionalBool(params, key: "asap")
-        let dueDate = optionalString(params, key: "due_date")
-        let dueDateTimePresent = optionalBool(params, key: "due_date_time_present")
-        let sortOrder = params.arguments?["sort_order"]?.doubleValue
-        let expiresLater = optionalBool(params, key: "expires_later")
-        let sizeText = optionalString(params, key: "size_text")
-        let ownerId = optionalInt(params, key: "owner_id")
-        let responsibleId = optionalInt(params, key: "responsible_id")
-        let ownerEmail = optionalString(params, key: "owner_email")
-        let typeId = optionalInt(params, key: "type_id")
-        let externalId = optionalString(params, key: "external_id")
-        let card = try await kaiten.createCard(
-          title: title,
-          boardId: boardId,
-          columnId: columnId,
-          laneId: laneId,
-          description: description,
-          asap: asap,
-          dueDate: dueDate,
-          dueDateTimePresent: dueDateTimePresent,
-          sortOrder: sortOrder,
-          expiresLater: expiresLater,
-          sizeText: sizeText,
-          ownerId: ownerId,
-          responsibleId: responsibleId,
-          ownerEmail: ownerEmail,
-          position: optionalInt(params, key: "position").flatMap { CardPosition(rawValue: $0) },
-          typeId: typeId,
-          externalId: externalId
-        )
+        var options = CardCreateOptions(title: title, boardId: boardId)
+        options.columnId = optionalInt(params, key: "column_id")
+        options.laneId = optionalInt(params, key: "lane_id")
+        options.description = normalizeOptionalEscapedNewlines(optionalString(params, key: "description"))
+        options.asap = optionalBool(params, key: "asap")
+        options.dueDate = optionalString(params, key: "due_date")
+        options.dueDateTimePresent = optionalBool(params, key: "due_date_time_present")
+        options.sortOrder = optionalDouble(params, key: "sort_order")
+        options.expiresLater = optionalBool(params, key: "expires_later")
+        options.sizeText = optionalString(params, key: "size_text")
+        options.ownerId = optionalInt(params, key: "owner_id")
+        options.responsibleId = optionalInt(params, key: "responsible_id")
+        options.ownerEmail = optionalString(params, key: "owner_email")
+        options.position = optionalInt(params, key: "position").flatMap { CardPosition(rawValue: $0) }
+        options.typeId = optionalInt(params, key: "type_id")
+        options.externalId = optionalString(params, key: "external_id")
+        let card = try await kaiten.createCard(options)
         return toJSON(card)
 
       case "kaiten_create_comment":
@@ -697,7 +680,7 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
       case "kaiten_remove_card_child":
         let cardId = try requireInt(params, key: "card_id")
         let childId = try requireInt(params, key: "child_id")
-        let deletedId = try await kaiten.removeCardChild(cardId: cardId, childId: childId)
+        let deletedId = try await kaiten.removeCardChild(cardId: cardId, childCardId: childId)
         return toJSON(["id": deletedId])
 
       // Users
