@@ -337,7 +337,9 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
           withJSONObject: propsObject.mapValues { jsonValueToAny($0) })
         let properties = try JSONDecoder().decode(
           Components.Schemas.UpdateCardRequest.propertiesPayload.self, from: propsData)
-        let card = try await kaiten.updateCard(id: cardId, properties: properties)
+        var options = CardUpdateOptions()
+        options.properties = properties
+        let card = try await kaiten.updateCard(id: cardId, options)
         return toJSON(card)
 
       // Sprint
