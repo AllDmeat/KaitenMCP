@@ -1,5 +1,5 @@
 {
-  "originHash" : "99b278ffd37997f4f312f4bb0be55a16dd87acc609306c7e1f0692e1c13fbe66",
+  "originHash" : "4db619e90019190ffd10aaca595a63e6171fccb0e95e44d980f9895aa911de53",
   "pins" : [
     {
       "identity" : "eventsource",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AllDmeat/KaitenSDK.git",
       "state" : {
-        "revision" : "32ea2c9cc6c1e084f9c0b3dd65f42eb964f66111",
-        "version" : "1.4.0"
+        "revision" : "557ee5c944f51c27a96dfeab5231c34bc8238aaf",
+        "version" : "1.6.0"
       }
     },
     {
