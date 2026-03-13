@@ -75,7 +75,7 @@ let cardsTools: [Tool] = [
           "exclude_owner_ids": .object(["type": "string", "description": "Exclude these owner IDs"]),
           "exclude_card_ids": .object(["type": "string", "description": "Exclude these card IDs"]),
           "condition": .object([
-            "type": "integer", "description": "Card condition: 1=queued, 2=in progress, 3=done",
+            "type": "integer", "description": "Card condition: 1 = on board (active), 2 = archived",
           ]),
           "states": .object(["type": "string", "description": "Comma-separated states"]),
           "archived": .object([
@@ -166,7 +166,7 @@ let cardsTools: [Tool] = [
           "service_id": .object(["type": "integer", "description": "Service ID"]),
           "blocked": .object(["type": "boolean", "description": "Blocked flag"]),
           "condition": .object([
-            "type": "integer", "description": "Condition: 1=queued, 2=in progress, 3=done",
+            "type": "integer", "description": "Card condition: 1 = on board (active), 2 = archived",
           ]),
           "external_id": .object(["type": "string", "description": "External ID"]),
           "text_format_type_id": .object(["type": "integer", "description": "Text format type ID"]),
