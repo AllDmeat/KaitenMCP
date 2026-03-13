@@ -39,7 +39,7 @@ log(
 
 let server = Server(
   name: "KaitenMCP",
-  version: "1.3.0",
+  version: kaitenMCPVersion,
   capabilities: .init(
     tools: .init(listChanged: false)
   )
