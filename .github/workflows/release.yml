@@ -41,7 +41,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
 
       - name: Generate version
-        run: sh scripts/generate-version.sh "${{ github.ref_name }}"
+        run: bash scripts/generate-version.sh "${{ github.ref_name }}"
 
       - name: Build release binary
         id: build
