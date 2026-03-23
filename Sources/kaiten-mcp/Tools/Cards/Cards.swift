@@ -4,7 +4,7 @@ let cardsTools: [Tool] = [
   Tool(
       name: "kaiten_list_cards",
       description:
-        "List cards (paginated, max 100 per page). Defaults to active (non-archived) cards; set archived=true to include archived cards. Supports 40+ filter parameters.",
+        "List cards (paginated, max 100 per page). By default returns summary (id, title, column_id, lane_id, owner_id, due_date, tag_ids); set summary=false for full card objects. Defaults to active (non-archived) cards; set archived=true to include archived cards.",
       inputSchema: .object([
         "type": "object",
         "properties": .object([
@@ -93,6 +93,12 @@ let cardsTools: [Tool] = [
           "order_space_id": .object(["type": "integer", "description": "Space ID for ordering"]),
           "additional_card_fields": .object([
             "type": "string", "description": "Extra fields to include",
+          ]),
+          "summary": .object([
+            "type": "boolean",
+            "description":
+              "When true (default), returns only essential fields (id, title, column_id, lane_id, owner_id, due_date, tag_ids) to save tokens. Set to false for full card objects.",
+            "default": .bool(true),
           ]),
         ]),
       ])

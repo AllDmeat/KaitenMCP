@@ -182,6 +182,17 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
         let page = try await kaiten.listCards(
           boardId: boardId, columnId: columnId, laneId: laneId, offset: offset, limit: limit,
           filter: filter)
+
+        let summary = optionalBool(params, key: "summary") ?? true
+        if summary {
+          let summaryPage = Page(
+            items: page.items.map { CardSummary(card: $0) },
+            offset: page.offset,
+            limit: page.limit,
+            hasMore: page.hasMore
+          )
+          return toJSON(summaryPage)
+        }
         return toJSON(page)
 
       case "kaiten_get_card":
