@@ -105,7 +105,7 @@ let cardsTools: [Tool] = [
     ),
   Tool(
       name: "kaiten_get_card",
-      description: "Get a single card by ID",
+      description: "Get a single card by ID. Returns a summary with essential fields by default; set summary=false for the full card object.",
       inputSchema: .object([
         "type": "object",
         "properties": .object([
