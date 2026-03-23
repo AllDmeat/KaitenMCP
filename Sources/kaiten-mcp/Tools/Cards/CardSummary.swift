@@ -1,8 +1,8 @@
 import KaitenSDK
 
 struct CardSummary: Encodable, Sendable {
-  let id: Int?
-  let title: String?
+  let id: Int
+  let title: String
   let column_id: Int?
   let lane_id: Int?
   let owner_id: Int?
@@ -10,8 +10,8 @@ struct CardSummary: Encodable, Sendable {
   let tag_ids: [Int]?
 
   init(card: Components.Schemas.Card) {
-    self.id = card.id
-    self.title = card.title
+    self.id = card.id ?? 0
+    self.title = card.title ?? ""
     self.column_id = card.column_id
     self.lane_id = card.lane_id
     self.owner_id = card.owner_id
