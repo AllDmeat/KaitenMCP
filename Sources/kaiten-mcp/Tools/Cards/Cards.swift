@@ -105,14 +105,20 @@ let cardsTools: [Tool] = [
     ),
   Tool(
       name: "kaiten_get_card",
-      description: "Get a single card by ID",
+      description: "Get a single card by ID. Returns a summary with essential fields by default; set summary=false for the full card object.",
       inputSchema: .object([
         "type": "object",
         "properties": .object([
           "id": .object([
             "type": "integer",
             "description": "Card ID",
-          ])
+          ]),
+          "summary": .object([
+            "type": "boolean",
+            "description":
+              "When true (default), returns only essential fields (id, title, description, board_id, column_id, lane_id, state, condition, archived, blocked, asap, owner_id, due_date, created, updated, type_id, tag_ids, sprint_id, children_count, children_done, parents_count, size_text) to save tokens. Set to false for the full card object.",
+            "default": .bool(true),
+          ]),
         ]),
         "required": .array(["id"]),
       ])
