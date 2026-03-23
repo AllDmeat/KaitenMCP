@@ -198,6 +198,10 @@ func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
       case "kaiten_get_card":
         let id = try requireInt(params, key: "id")
         let card = try await kaiten.getCard(id: id)
+        let summary = optionalBool(params, key: "summary") ?? true
+        if summary {
+          return toJSON(CardDetailSummary(card: card))
+        }
         return toJSON(card)
 
       case "kaiten_update_card":
